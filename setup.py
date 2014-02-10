@@ -35,9 +35,14 @@ setup(name='gummanager.cli',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'gummanager.libs',
+          'docopt'
           # -*- Extra requirements: -*-
       ],
       entry_points="""
       # -*- Entry points: -*-
+      [console_scripts]
+      gum = gummanager.cli:main
       """,
+
       )
