@@ -31,16 +31,15 @@ SUBTARGETS = {
 def main():
     arguments = docopt(__doc__, version='GUM Cli 1.0')
 
-    config = getConfiguration(arguments['--config'])
-
     actions = [arg_name for arg_name, arg_value in arguments.items() if arg_name in ACTIONS and arg_value == True]
     action_name = actions[0]
 
     targets = [arg_name for arg_name, arg_value in arguments.items() if arg_name in TARGETS and arg_value == True]
     target_name = targets[0]
 
-    target = TARGETS[target_name]()
+    config = getConfiguration(arguments['--config'])
     target_config = config.get(target_name, {})
+    target = TARGETS[target_name](target_config)
 
     subtarget = [arg_name for arg_name, arg_value in arguments.items() if arg_name in target.subtargets and arg_value == True]
     subtarget_name = subtarget[0]
@@ -50,9 +49,7 @@ def main():
     if target_method is None:
         sys.exit('Not Implemented: {} {} {}'.format(action_name, target_name, subtarget_name))
 
-    target_method(target_config, **arguments)
-
-    print(arguments)
+    target_method(**arguments)
 
 
 

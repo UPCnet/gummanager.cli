@@ -1,2 +1,4 @@
 class Target(object):
-    pass
+
+    def __init__(self, config):
+        self.config = config

@@ -1,14 +1,14 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
-from gummanager.libs.ldap import LdapServer
+from gummanager.libs import LdapServer
 
 class LdapTarget(Target):
     subtargets =  ['branch', 'branches']
 
-    def add_branch(self, config, **kwargs):
+    def add_branch(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'ldap-branch-name')
 
-        ld = LdapServer(**config)    
+        ld = LdapServer(**self.config)    
         ld.connect()    
         ld.addOU(branch_name)
         ld.cd('ou={}'.format(branch_name))
