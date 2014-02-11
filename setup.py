@@ -36,7 +36,8 @@ setup(name='gummanager.cli',
       install_requires=[
           'setuptools',
           'gummanager.libs',
-          'docopt'
+          'docopt',
+          'blessings'
           # -*- Extra requirements: -*-
       ],
       entry_points="""
