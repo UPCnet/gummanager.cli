@@ -15,17 +15,17 @@ class MaxTarget(Target):
 
         params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         params.update(self.config)
-        oauth = MaxServer(**params)
-        oauth.new_instance(instance_name)
+        maxserver = MaxServer(**params)
+        maxserver.new_instance(instance_name)
 
     def get_available_port(self, **kwargs):
-        oauth = MaxServer(**self.config)
-        port = oauth.get_available_port()
+        maxserver = MaxServer(**self.config)
+        port = maxserver.get_available_port()
         print port
 
     def list_instances(self, **kwargs):
-        oauth = MaxServer(**self.config)
-        instances = oauth.get_instances()
+        maxserver = MaxServer(**self.config)
+        instances = maxserver.get_instances()
         table = GUMTable()
         table.from_dict_list(
             instances, 
