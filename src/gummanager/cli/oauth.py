@@ -41,7 +41,8 @@ class OauthTarget(Target):
         table.from_dict_list(
             statuses, 
             formatters={
-                'status': highlighter
+                'name': highlighter(default='bold_yellow'),  
+                'status': highlighter(default='red', values={'active': 'green'})
             },
             titles={
                 'name': 'Name',

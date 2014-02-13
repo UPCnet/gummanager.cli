@@ -2,6 +2,7 @@ import os
 import json
 import prettytable
 from blessings import Terminal
+from functools import partial
 
 term = Terminal()
 
@@ -19,7 +20,6 @@ class GUMTable(prettytable.PrettyTable):
     def __init__(self, *args, **kwargs):
         super(GUMTable, self).__init__(*args, **kwargs)
         self.table_header_style = term.bold
-        self.first_col_style = term.bold_yellow
 
         self.hrules = prettytable.ALL        
         self.vertical_char = term.black('|')
@@ -41,15 +41,12 @@ class GUMTable(prettytable.PrettyTable):
             for col_num, col_id in enumerate(row):
                 if col_id not in hide:
                     value = row[col_id]
-                    if col_num == 0:
-                        rowdata.append(self.first_col_style(value))
-                    else:
-                        if isinstance(value, dict):
-                            subheader_length = max([len(key) for key in value.keys()])
-                            format_string = '{{:<{}}} : {{}}'.format(subheader_length)
-                            value = '\n'.join([format_string.format(key, subvalue) for key, subvalue in value.items()])
-                        formatter = formatters.get(col_id, default_formatter)
-                        rowdata.append(formatter(value))
+                    if isinstance(value, dict):
+                        subheader_length = max([len(key) for key in value.keys()])
+                        format_string = '{{:<{}}} : {{}}'.format(subheader_length)
+                        value = '\n'.join([format_string.format(key, subvalue) for key, subvalue in value.items()])
+                    formatter = formatters.get(col_id, default_formatter)
+                    rowdata.append(formatter(value))
             self.add_row(rowdata)
 
     def sorted(self, column_id):
@@ -60,8 +57,13 @@ class GUMTable(prettytable.PrettyTable):
 def default_formatter(value):
     return value
 
-def highlighter(value):
-    if value == 'active':
-        return term.green(value)
-    else:
-        return term.red(value)
+def highlighter(**kwargs):
+    def highlight(value, default='normal', values={}):
+        for key, format in values.items():
+            if key == value:
+                return getattr(term, format)(value)
+        if default:
+            return getattr(term, default)(value)
+        else:
+            return value
+    return partial(highlight, **kwargs)
