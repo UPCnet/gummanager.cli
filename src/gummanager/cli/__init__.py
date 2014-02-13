@@ -18,6 +18,7 @@ Usage:
     gum max list instances [-c]
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]
+    gum genweb list instances [-c]
 
 
 Options:
@@ -30,6 +31,7 @@ import docopt
 from gummanager.cli.ldap import LdapTarget
 from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.max import MaxTarget
+from gummanager.cli.genweb import GenwebTarget
 
 from gummanager.cli.utils import getConfiguration
 import sys
@@ -86,6 +88,7 @@ TARGETS = {
     'ldap': LdapTarget,
     'oauth': OauthTarget,
     'max': MaxTarget,
+    'genweb': GenwebTarget,
 
 }
 
