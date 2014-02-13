@@ -13,7 +13,17 @@ class GenwebTarget(Target):
 
     def list_instances(self, **kwargs):
         genweb = GenwebServer(**self.config)
-        genweb.list_instances()
+        instances = genweb.get_instances()
+        table = GUMTable()
+        table.from_dict_list(
+            instances, 
+            formatters={
+                'name': highlighter(default='bold_yellow'),  
+            },            
+            titles={
+                'name': 'Name',
+            })
+        print table.sorted('environment')
        
     def info(self, **kwargs):
         print
