@@ -12,7 +12,7 @@ class GenwebTarget(Target):
     extratargets = ['port']
 
     def list_instances(self, **kwargs):
-        genweb = GenwebServer(**params)
+        genweb = GenwebServer(**self.config)
         genweb.list_instances()
        
     def info(self, **kwargs):
