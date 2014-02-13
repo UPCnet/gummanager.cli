@@ -35,7 +35,6 @@ setup(name='gummanager.cli',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'gummanager.libs',
           'docopt',
           'blessings',
           'prettytable'
