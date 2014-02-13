@@ -28,7 +28,7 @@ class GUMTable(prettytable.PrettyTable):
         self.titles = {}
 
 
-    def from_dict_list(self, data, hide=[], titles={}):
+    def from_dict_list(self, data, hide=[], titles={}, formatters={}):
         self.titles = titles
         
         for row_num, row in enumerate(data):
@@ -48,10 +48,20 @@ class GUMTable(prettytable.PrettyTable):
                             subheader_length = max([len(key) for key in value.keys()])
                             format_string = '{{:<{}}} : {{}}'.format(subheader_length)
                             value = '\n'.join([format_string.format(key, subvalue) for key, subvalue in value.items()])
-                        rowdata.append(value)
+                        formatter = formatters.get(col_id, default_formatter)
+                        rowdata.append(formatter(value))
             self.add_row(rowdata)
 
     def sorted(self, column_id):
         self.align = 'l'
         column_name = self.titles.get(column_id, column_id)
         return self.get_string(sortby=self.table_header_style(column_name))
+
+def default_formatter(value):
+    return value
+
+def highlighter(value):
+    if value == 'active':
+        return term.green(value)
+    else:
+        return term.red(value)

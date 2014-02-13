@@ -2,11 +2,12 @@ from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import GUMTable
+from gummanager.cli.utils import highlighter
 from gummanager.libs import OauthServer
 from pprint import pprint
 
 class OauthTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
@@ -23,7 +24,37 @@ class OauthTarget(Target):
         port = oauth.get_available_port()
         print port
 
+    def status(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+
+        oauth = OauthServer(**self.config)
+        instances = oauth.get_instances()
+        if instance_name:
+            instances = [instance for instance in instances if instance['name'] == instance_name]
+
+        statuses = []
+        for instance in instances:
+            status = oauth.get_status(instance['name'])
+            statuses.append(status)
+            
+        table = GUMTable()
+        table.from_dict_list(
+            statuses, 
+            formatters={
+                'status': highlighter
+            },
+            titles={
+                'name': 'Name',
+                'status': 'Osiris Status',
+                'pid': 'PID',
+                'uptime': 'Started',
+                'server': 'Server access'
+            })
+        print table.sorted('name')
+
+
     def list_instances(self, **kwargs):
+        
         oauth = OauthServer(**self.config)
         instances = oauth.get_instances()
         table = GUMTable()

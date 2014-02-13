@@ -11,10 +11,12 @@ Usage:
     gum oauth info [-c]
     gum oauth add instance <instance-name> [<instance-port>] [-c]
     gum oauth list instances [-c]
+    gum oauth status [<instance-name>] [-c]
     gum oauth get available port [-c]
     gum max info [-c]
     gum max add instance <instance-name> [<instance-port>] [-c]
     gum max list instances [-c]
+    gum max status [<instance-name>] [-c]
     gum max get available port [-c]
 
 
