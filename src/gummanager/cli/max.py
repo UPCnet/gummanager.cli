@@ -2,10 +2,10 @@ from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import GUMTable
-from gummanager.libs import OauthServer
+from gummanager.libs import MaxServer
 from pprint import pprint
 
-class OauthTarget(Target):
+class MaxTarget(Target):
     actions = ['add', 'list', 'del', 'info', 'get']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
@@ -15,16 +15,16 @@ class OauthTarget(Target):
 
         params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         params.update(self.config)
-        oauth = OauthServer(**params)
+        oauth = MaxServer(**params)
         oauth.new_instance(instance_name)
 
     def get_available_port(self, **kwargs):
-        oauth = OauthServer(**self.config)
+        oauth = MaxServer(**self.config)
         port = oauth.get_available_port()
         print port
 
     def list_instances(self, **kwargs):
-        oauth = OauthServer(**self.config)
+        oauth = MaxServer(**self.config)
         instances = oauth.get_instances()
         table = GUMTable()
         table.from_dict_list(
@@ -39,7 +39,7 @@ class OauthTarget(Target):
             })
         print table.sorted('port_index')
 
-       
+        
     def info(self, **kwargs):
         print
         pprint(self.config)

@@ -12,6 +12,10 @@ Usage:
     gum oauth add instance <instance-name> [<instance-port>] [-c]
     gum oauth list instances [-c]
     gum oauth get available port [-c]
+    gum max info [-c]
+    gum max add instance <instance-name> [<instance-port>] [-c]
+    gum max list instances [-c]
+    gum max get available port [-c]
 
 
 Options:
@@ -23,6 +27,7 @@ Options:
 import docopt
 from gummanager.cli.ldap import LdapTarget
 from gummanager.cli.oauth import OauthTarget
+from gummanager.cli.max import MaxTarget
 
 from gummanager.cli.utils import getConfiguration
 import sys
@@ -77,7 +82,9 @@ docopt.DocoptExit = DocoptExit
 
 TARGETS = {
     'ldap': LdapTarget,
-    'oauth': OauthTarget
+    'oauth': OauthTarget,
+    'max': MaxTarget,
+
 }
 
 SUBTARGETS = {
