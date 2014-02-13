@@ -27,6 +27,7 @@ from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.utils import getConfiguration
 import sys
 import re
+import prettytable
 
 
 def put_spacing(string):
@@ -57,6 +58,9 @@ def extras(help, version, options, doc):
     if version and any(o.name == '--version' and o.value for o in options):
         print(version)
         sys.exit()  
+
+#monkeypatch prettytable to avoid counting blessings color codes
+prettytable._re = re.compile("\x1b[\[\(][0-9B]*m?")
          
 class DocoptExit(SystemExit):
 

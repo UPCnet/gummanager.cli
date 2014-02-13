@@ -1,9 +1,9 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import getConfiguration
+from gummanager.cli.utils import GUMTable
 from gummanager.libs import OauthServer
 from pprint import pprint
-
 
 class OauthTarget(Target):
     actions = ['add', 'list', 'del', 'info', 'get']
@@ -26,8 +26,23 @@ class OauthTarget(Target):
     def list_instances(self, **kwargs):
         oauth = OauthServer(**self.config)
         instances = oauth.get_instances()
-        pprint(instances)
+        table = GUMTable()
+        table.from_dict_list(
+            instances, 
+            hide=["circus_tcp", "mongo_database"],
+            titles={
+                'name': 'Name',
+                'port_index': 'Index',
+                'server': 'Server access',
+                'ldap': 'Ldap configuration',
+                'circus':' Circus'
+            })
+        print table.sorted('port_index')
 
+        #cols = ["Name", "Index", "MongoDB", "Server", "DNS", "Circus"]
+
+        
+        
     def info(self, **kwargs):
         print
         pprint(self.config)
