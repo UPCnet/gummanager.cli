@@ -37,7 +37,7 @@ setup(name='gummanager.cli',
           'setuptools',
           'docopt',
           'blessings',
-          'prettytable'
+          'prettytable',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
