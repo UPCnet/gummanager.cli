@@ -11,15 +11,10 @@ class LdapTarget(Target):
     def add_branch(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
 
-        ld = LdapServer(**self.config)    
-        ld.connect()    
-        ld.addOU(branch_name)
-        ld.cd('ou={}'.format(branch_name))
-        ld.addUser('ldap', 'LDAP Access User', 'secret')
-        ld.addUser('restricted', 'Restricted User', '{}LidT8'.format(branch_name))
-        ld.addGroup('Managers')
-        ld.addOU('groups')
-        ld.addOU('users')
+        ld = LdapServer(**self.config)
+        ld.connect()
+
+        ld.add_branch(branch_name)
         ld.disconnect()
 
     def info(self, **kwargs):
