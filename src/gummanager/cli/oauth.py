@@ -6,18 +6,26 @@ from gummanager.cli.utils import highlighter
 from gummanager.libs import OauthServer
 from pprint import pprint
 
+
 class OauthTarget(Target):
     actions = ['add', 'list', 'del', 'info', 'get', 'status']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
-
         params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         params.update(self.config)
         oauth = OauthServer(**params)
-        oauth.new_instance(instance_name)
+
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        port_index = getOptionFrom(kwargs, 'port-index', oauth.get_available_port())
+
+        instance = oauth.instance_by_port_index(port_index)
+        if instance:
+            print 'The specified port index is already in use by  "{}" oauth'.format(instance['name'])
+
+        ldap_name = getOptionFrom(kwargs, 'ldap-branch', instance_name)
+        oauth.new_instance(instance_name, port_index, ldap_branch=ldap_name)
 
     def get_available_port(self, **kwargs):
         oauth = OauthServer(**self.config)
@@ -36,12 +44,12 @@ class OauthTarget(Target):
         for instance in instances:
             status = oauth.get_status(instance['name'])
             statuses.append(status)
-            
+
         table = GUMTable()
         table.from_dict_list(
-            statuses, 
+            statuses,
             formatters={
-                'name': highlighter(default='bold_yellow'),  
+                'name': highlighter(default='bold_yellow'),
                 'status': highlighter(default='red', values={'active': 'green'})
             },
             titles={
@@ -53,25 +61,23 @@ class OauthTarget(Target):
             })
         print table.sorted('name')
 
-
     def list_instances(self, **kwargs):
-        
+
         oauth = OauthServer(**self.config)
         instances = oauth.get_instances()
         table = GUMTable()
         table.from_dict_list(
-            instances, 
+            instances,
             hide=["circus_tcp", "mongo_database"],
             titles={
                 'name': 'Name',
                 'port_index': 'Index',
                 'server': 'Server access',
                 'ldap': 'Ldap configuration',
-                'circus':' Circus'
+                'circus': ' Circus'
             })
         print table.sorted('port_index')
 
-       
     def info(self, **kwargs):
         print
         pprint(self.config)

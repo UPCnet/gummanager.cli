@@ -6,8 +6,14 @@ from functools import partial
 
 term = Terminal()
 
-def getOptionFrom(options, option_name):
-        return options.get(option_name, options.get('<{}>'.format(option_name), None))
+
+def askOption(option_name):
+    return raw_input('Enter value for required "{}" option: '.format(option_name))
+
+
+def getOptionFrom(options, option_name, default=None):
+    option = options.get(option_name, options.get('<{}>'.format(option_name), options.get('--{}'.format(option_name), None)))
+    return option if option is not None else (default if default is not None else askOption(option_name))
 
 
 def getConfiguration(config_file_option):
