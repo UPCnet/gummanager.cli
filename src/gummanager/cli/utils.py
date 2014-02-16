@@ -21,22 +21,21 @@ class GUMTable(prettytable.PrettyTable):
         super(GUMTable, self).__init__(*args, **kwargs)
         self.table_header_style = term.bold
 
-        self.hrules = prettytable.ALL        
+        self.hrules = prettytable.ALL
         self.vertical_char = term.black('|')
         self.horizontal_char = term.black('-')
         self.junction_char = term.black('-')
         self.titles = {}
 
-
     def from_dict_list(self, data, hide=[], titles={}, formatters={}):
         self.titles = titles
-        
+
         for row_num, row in enumerate(data):
             if row_num == 0:
                 for col_id in row.keys():
                     if col_id not in hide:
                         col_name = titles.get(col_id, col_id)
-                        self.add_column(self.table_header_style(col_name), [])                
+                        self.add_column(self.table_header_style(col_name), [])
             rowdata = []
             for col_num, col_id in enumerate(row):
                 if col_id not in hide:
@@ -54,8 +53,10 @@ class GUMTable(prettytable.PrettyTable):
         column_name = self.titles.get(column_id, column_id)
         return self.get_string(sortby=self.table_header_style(column_name))
 
+
 def default_formatter(value):
     return value
+
 
 def highlighter(**kwargs):
     def highlight(value, default='normal', values={}):
@@ -67,3 +68,7 @@ def highlighter(**kwargs):
         else:
             return value
     return partial(highlight, **kwargs)
+
+
+def get_length(value):
+    return len(value)

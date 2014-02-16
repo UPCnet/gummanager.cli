@@ -1,12 +1,12 @@
 from gummanager.cli.target import Target
-from gummanager.cli.utils import getOptionFrom
+from gummanager.cli.utils import getOptionFrom, GUMTable, get_length
 from gummanager.libs import LdapServer
 from pprint import pprint
 
 
 class LdapTarget(Target):
     actions = ['add', 'list', 'del', 'info']
-    subtargets =  ['branch']
+    subtargets = ['branch', 'branches']
 
     def add_branch(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
@@ -15,6 +15,27 @@ class LdapTarget(Target):
         ld.connect()
 
         ld.add_branch(branch_name)
+        ld.disconnect()
+
+    def list_branches(self, **kwargs):
+        ld = LdapServer(**self.config)
+        ld.connect()
+
+        branches = ld.get_branches()
+        table = GUMTable()
+        table.from_dict_list(
+            branches,
+            formatters={
+                'groups': get_length,
+                'users': get_length
+            },
+            titles={
+                'name': 'Name',
+                'groups': 'Groups',
+                'users': 'Users'
+            })
+        print table.sorted('name')
+
         ld.disconnect()
 
     def info(self, **kwargs):
