@@ -8,7 +8,7 @@ from pprint import pprint
 
 
 class OauthTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
@@ -26,6 +26,24 @@ class OauthTarget(Target):
 
         ldap_name = getOptionFrom(kwargs, 'ldap-branch', instance_name)
         oauth.new_instance(instance_name, port_index, ldap_branch=ldap_name)
+
+    def start(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        oauth = OauthServer(**self.config)
+        status = oauth.get_status(instance_name)
+        if status['status'] == 'active':
+            print '\nAlready running\n'
+        if status['status'] in ['stopped', 'unknown']:
+            oauth.start(instance_name)
+
+    def stop(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        oauth = OauthServer(**self.config)
+        status = oauth.get_status(instance_name)
+        if status['status'] == 'stopped':
+            print '\nAlready stopped\n'
+        if status['status'] == 'active':
+            oauth.stop(instance_name)
 
     def get_available_port(self, **kwargs):
         oauth = OauthServer(**self.config)
