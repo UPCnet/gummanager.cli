@@ -24,6 +24,24 @@ class MaxTarget(Target):
         oauth_instance = getOptionFrom(kwargs, 'oauth-instance', instance_name)
         maxserver.new_instance(instance_name, port_index, oauth_instance=oauth_instance)
 
+    def start(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = MaxServer(**self.config)
+        status = maxserver.get_status(instance_name)
+        if status['status'] == 'active':
+            print '\nAlready running\n'
+        if status['status'] in ['stopped', 'unknown']:
+            maxserver.start(instance_name)
+
+    def stop(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = MaxServer(**self.config)
+        status = maxserver.get_status(instance_name)
+        if status['status'] == 'stopped':
+            print '\nAlready stopped\n'
+        if status['status'] == 'active':
+            maxserver.stop(instance_name)
+
     def get_available_port(self, **kwargs):
         maxserver = MaxServer(**self.config)
         port = maxserver.get_available_port()

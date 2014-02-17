@@ -18,6 +18,7 @@ Usage:
     gum max list instances [-c]
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]
+    gum max <instance-name> (start|stop) [-c]
     gum genweb list instances [-c]
 
 
