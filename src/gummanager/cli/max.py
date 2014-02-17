@@ -77,10 +77,9 @@ class MaxTarget(Target):
                 'port_index': 'Index',
                 'server': 'Server access',
                 'ldap': 'Ldap configuration',
-                'circus':' Circus'
+                'circus': ' Circus'
             })
         print table.sorted('port_index')
-
 
     def info(self, **kwargs):
         print
