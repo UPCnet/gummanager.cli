@@ -51,6 +51,10 @@ class MaxTarget(Target):
         if status['status'] == 'active':
             maxserver.stop(instance_name)
 
+    def reload_nginx(self, **kwargs):
+        oauth = OauthServer(**self.config)
+        oauth.reload_nginx_configuration()
+
     def get_available_port(self, **kwargs):
         maxserver = MaxServer(**self.config)
         port = maxserver.get_available_port()

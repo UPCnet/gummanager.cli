@@ -20,6 +20,7 @@ Usage:
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]
     gum max <instance-name> (start|stop) [-c]
+    gum max reload nginx [-c]
     gum genweb list instances [-c]
 
 
