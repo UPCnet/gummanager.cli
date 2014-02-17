@@ -33,11 +33,11 @@ class OauthTarget(Target):
         print port
 
     def status(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
+        instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
         oauth = OauthServer(**self.config)
         instances = oauth.get_instances()
-        if instance_name:
+        if instance_name != 'all':
             instances = [instance for instance in instances if instance['name'] == instance_name]
 
         statuses = []
@@ -50,7 +50,11 @@ class OauthTarget(Target):
             statuses,
             formatters={
                 'name': highlighter(default='bold_yellow'),
-                'status': highlighter(default='red', values={'active': 'green'})
+                'status': highlighter(values={
+                    'active': 'green',
+                    'unknown': 'red',
+                    'stopped': 'red'}
+                )
             },
             titles={
                 'name': 'Name',

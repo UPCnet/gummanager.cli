@@ -6,8 +6,9 @@ from gummanager.cli.utils import highlighter
 from gummanager.libs import MaxServer
 from pprint import pprint
 
+
 class MaxTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
@@ -25,28 +26,32 @@ class MaxTarget(Target):
         print port
 
     def status(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
+        instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
         oauth = MaxServer(**self.config)
         instances = oauth.get_instances()
-        if instance_name:
+        if instance_name != 'all':
             instances = [instance for instance in instances if instance['name'] == instance_name]
 
         statuses = []
         for instance in instances:
             status = oauth.get_status(instance['name'])
             statuses.append(status)
-            
+
         table = GUMTable()
         table.from_dict_list(
-            statuses, 
+            statuses,
             formatters={
-                'name': highlighter(default='bold_yellow'),  
-                'status': highlighter(default='red', values={'active': 'green'})
+                'name': highlighter(default='bold_yellow'),
+                'status': highlighter(values={
+                    'active': 'green',
+                    'unknown': 'red',
+                    'stopped': 'red'}
+                )
             },
             titles={
                 'name': 'Name',
-                'status': 'Osiris Status',
+                'status': 'Status',
                 'pid': 'PID',
                 'uptime': 'Started',
                 'server': 'Server access'
@@ -58,11 +63,11 @@ class MaxTarget(Target):
         instances = maxserver.get_instances()
         table = GUMTable()
         table.from_dict_list(
-            instances, 
+            instances,
             hide=["circus_tcp", "mongo_database"],
             formatters={
-                'name': highlighter(default='bold_yellow'),  
-            },            
+                'name': highlighter(default='bold_yellow'),
+            },
             titles={
                 'name': 'Name',
                 'port_index': 'Index',
@@ -72,7 +77,7 @@ class MaxTarget(Target):
             })
         print table.sorted('port_index')
 
-        
+
     def info(self, **kwargs):
         print
         pprint(self.config)

@@ -3,6 +3,7 @@ import json
 import prettytable
 from blessings import Terminal
 from functools import partial
+import re
 
 term = Terminal()
 
@@ -56,8 +57,11 @@ class GUMTable(prettytable.PrettyTable):
 
     def sorted(self, column_id):
         self.align = 'l'
-        column_name = self.titles.get(column_id, column_id)
-        return self.get_string(sortby=self.table_header_style(column_name))
+        if self._rows:
+            column_name = self.titles.get(column_id, column_id)
+            return self.get_string(sortby=self.table_header_style(column_name))
+        else:
+            return term.yellow("\nSorry, There's nothing to see here...\n")
 
 
 def default_formatter(value):
@@ -66,13 +70,12 @@ def default_formatter(value):
 
 def highlighter(**kwargs):
     def highlight(value, default='normal', values={}):
+        default_formatter = getattr(term, default)
         for key, format in values.items():
-            if key == value:
-                return getattr(term, format)(value)
-        if default:
-            return getattr(term, default)(value)
-        else:
-            return value
+            formatter = getattr(term, format)
+            value = re.sub(r'({})'.format(key), r'{}\1{}'.format(formatter, default_formatter), value)
+
+        return default_formatter + value + default_formatter
     return partial(highlight, **kwargs)
 
 
