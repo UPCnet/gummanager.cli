@@ -7,7 +7,7 @@ from pprint import pprint
 
 
 class MaxTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
