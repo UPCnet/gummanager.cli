@@ -8,6 +8,12 @@ import re
 term = Terminal()
 
 
+def ask_confirmation(message):
+    print term.yellow(message)
+    value = raw_input('    Proceed?  (Y, N): ')
+    return value.strip().upper() == 'Y'
+
+
 def askOption(option_name):
     return raw_input('Enter value for required "{}" option: '.format(option_name))
 

@@ -1,7 +1,7 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import highlighter
+from gummanager.cli.utils import highlighter, ask_confirmation
 from gummanager.libs import MaxServer
 from pprint import pprint
 
@@ -22,7 +22,16 @@ class MaxTarget(Target):
             print 'The specified port index is already in use by  "{}" oauth'.format(instance['name'])
 
         oauth_instance = getOptionFrom(kwargs, 'oauth-instance', instance_name)
-        maxserver.new_instance(instance_name, port_index, oauth_instance=oauth_instance)
+        message = """
+    Adding a new max/bigmax server:
+        name: "{}"
+        server: "{}"
+        port_index: "{}"
+        oauth_server: "{}"
+
+        """.format(instance_name, self.config['server'], port_index, oauth_instance)
+        if ask_confirmation(message):
+            maxserver.new_instance(instance_name, port_index, oauth_instance=oauth_instance)
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')

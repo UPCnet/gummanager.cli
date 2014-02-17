@@ -2,7 +2,7 @@ from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import highlighter
+from gummanager.cli.utils import highlighter, ask_confirmation
 from gummanager.libs import OauthServer
 from pprint import pprint
 
@@ -25,7 +25,17 @@ class OauthTarget(Target):
             print 'The specified port index is already in use by  "{}" oauth'.format(instance['name'])
 
         ldap_name = getOptionFrom(kwargs, 'ldap-branch', instance_name)
-        oauth.new_instance(instance_name, port_index, ldap_branch=ldap_name)
+
+        message = """
+    Adding a new osiris OAuth server:
+        name: "{}"
+        server: "{}"
+        port_index: "{}"
+        ldap_branch: "{}"
+
+        """.format(instance_name, self.config['server'], port_index, ldap_name)
+        if ask_confirmation(message):
+            oauth.new_instance(instance_name, port_index, ldap_branch=ldap_name)
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
