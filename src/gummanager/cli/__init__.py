@@ -13,7 +13,7 @@ Usage:
     gum oauth status [<instance-name>] [-c]
     gum oauth get available port [-c]
     gum max info [-c]
-    gum max add instance <instance-name> [<port-index>] [-c]
+    gum max add instance <instance-name> [--port=<port-index> --oauth-instance=<oauth-name>] [-c]
     gum max list instances [-c]
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]

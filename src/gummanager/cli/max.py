@@ -1,6 +1,5 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom
-from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import highlighter
 from gummanager.libs import MaxServer
@@ -13,12 +12,17 @@ class MaxTarget(Target):
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = MaxServer(**self.config)
 
-        params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
-        params.update(self.config)
-        maxserver = MaxServer(**params)
-        maxserver.new_instance(instance_name)
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        port_index = getOptionFrom(kwargs, 'port-index', maxserver.get_available_port())
+
+        instance = maxserver.instance_by_port_index(port_index)
+        if instance:
+            print 'The specified port index is already in use by  "{}" oauth'.format(instance['name'])
+
+        oauth_instance = getOptionFrom(kwargs, 'oauth-instance', instance_name)
+        maxserver.new_instance(instance_name, port_index, oauth_instance=oauth_instance)
 
     def get_available_port(self, **kwargs):
         maxserver = MaxServer(**self.config)
