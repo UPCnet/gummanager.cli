@@ -8,8 +8,8 @@ from pprint import pprint
 
 
 class OauthTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop']
-    subtargets = ['instance', 'instances', 'available']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload']
+    subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
@@ -44,6 +44,10 @@ class OauthTarget(Target):
             print '\nAlready stopped\n'
         if status['status'] == 'active':
             oauth.stop(instance_name)
+
+    def reload_nginx(self, **kwargs):
+        oauth = OauthServer(**self.config)
+        oauth.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
         oauth = OauthServer(**self.config)
