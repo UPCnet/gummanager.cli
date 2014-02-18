@@ -22,6 +22,7 @@ Usage:
     gum max <instance-name> (start|stop) [-c]
     gum max reload nginx [-c]
     gum genweb list instances [-c]
+    gum ulearn list instances [-c]
 
 
 Options:
@@ -35,6 +36,7 @@ from gummanager.cli.ldap import LdapTarget
 from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.max import MaxTarget
 from gummanager.cli.genweb import GenwebTarget
+from gummanager.cli.ulearn import ULearnTarget
 
 from gummanager.cli.utils import getConfiguration
 import sys
@@ -47,6 +49,7 @@ TARGETS = {
     'oauth': OauthTarget,
     'max': MaxTarget,
     'genweb': GenwebTarget,
+    'ulearn': ULearnTarget,
 
 }
 
