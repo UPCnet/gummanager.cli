@@ -7,7 +7,7 @@ from pprint import pprint
 
 
 class MaxTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'configure']
     subtargets = ['instance', 'instances', 'available']
     extratargets = ['port']
 
@@ -52,8 +52,8 @@ class MaxTarget(Target):
             maxserver.stop(instance_name)
 
     def reload_nginx(self, **kwargs):
-        oauth = OauthServer(**self.config)
-        oauth.reload_nginx_configuration()
+        maxserver = MaxServer(**self.config)
+        maxserver.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
         maxserver = MaxServer(**self.config)
