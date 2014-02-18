@@ -22,7 +22,9 @@ Usage:
     gum max <instance-name> (start|stop) [-c]
     gum max reload nginx [-c]
     gum genweb list instances [-c]
+    gum genweb add instance <instance-name> [-c]
     gum ulearn list instances [-c]
+    gum ulearn add instance <instance-name> [-c]
 
 
 Options:
