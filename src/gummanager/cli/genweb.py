@@ -8,8 +8,8 @@ from pprint import pprint
 
 class GenwebTarget(Target):
     server_klass = GenwebServer
-    actions = ['add', 'list', 'del', 'info', 'get', 'status']
-    subtargets = ['instance', 'instances', 'available']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'reload']
+    subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['mountpoint']
 
     def get_available_mountpoint(self, **kwargs):

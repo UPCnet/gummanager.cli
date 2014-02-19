@@ -27,6 +27,7 @@ Usage:
     gum ulearn list instances [-c]
     gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-c -f]
     gum ulearn get available mountpoint [-c]
+    gum ulearn reload nginx [-c]
 
 
 Options:

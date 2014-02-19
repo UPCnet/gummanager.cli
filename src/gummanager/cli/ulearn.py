@@ -18,9 +18,8 @@ class ULearnTarget(GenwebTarget):
     """
     server_klass = ULearnServer
 
-    @property
-    def Server(self):
-        return self.server_klass(**self.config)
+    def reload_nginx(self, **kwargs):
+        self.Server.reload_nginx_configuration()
 
     def add_instance(self, **kwargs):
 
