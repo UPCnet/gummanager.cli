@@ -22,9 +22,11 @@ Usage:
     gum max <instance-name> (start|stop) [-c]
     gum max reload nginx [-c]
     gum genweb list instances [-c]
-    gum genweb add instance <instance-name> [-c]
+    gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
+    gum genweb get available mountpoint [-c]
     gum ulearn list instances [-c]
-    gum ulearn add instance <instance-name> [-c]
+    gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
+    gum ulearn get available mountpoint [-c]
 
 
 Options:

@@ -19,13 +19,40 @@ def askOption(option_name):
 
 
 def getOptionFrom(options, option_name, default=None):
-    option = options.get(option_name, options.get('<{}>'.format(option_name), options.get('--{}'.format(option_name), None)))
+    option = options.get(option_name, options.get('<{}>'.format(option_name), options.get('--{}'.format(option_name), options.get('-{}'.format(option_name), None))))
     return option if option is not None else (default if default is not None else askOption(option_name))
 
 
 def getConfiguration(config_file_option):
     config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
     return json.loads(open(config_file).read())
+
+
+def padded_success(string):
+    print term.bold_green + '    {}'.format(string) + term.normal
+
+
+def padded_error(string):
+    print term.bold_red + '    {}\n'.format(string) + term.normal
+
+
+def padded_log(string, filters=[]):
+    print term.normal + '    {}\n'.format(string) + term.normal
+
+
+def step_log(string):
+    print term.bold_cyan + '\n> {}\n'.format(string) + term.normal
+
+
+def print_message(code, message):
+    if code == 0:
+        padded_error(message)
+    elif code == 1:
+        padded_success(message)
+    elif code == 2:
+        padded_log(message)
+    elif code == 3:
+        step_log(message)
 
 
 class GUMTable(prettytable.PrettyTable):
