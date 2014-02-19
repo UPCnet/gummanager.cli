@@ -7,6 +7,9 @@ import re
 
 term = Terminal()
 
+UNKNOWN_OPTION = object()
+DEFAULT_VALUE = object()
+
 
 def ask_confirmation(message):
     print term.yellow(message)
@@ -18,9 +21,35 @@ def askOption(option_name):
     return raw_input('Enter value for required "{}" option: '.format(option_name))
 
 
-def getOptionFrom(options, option_name, default=None):
-    option = options.get(option_name, options.get('<{}>'.format(option_name), options.get('--{}'.format(option_name), options.get('-{}'.format(option_name), None))))
-    return option if option is not None else (default if default is not None else askOption(option_name))
+def getOptionFrom(options, option_name, default=DEFAULT_VALUE):
+
+    # Try to get literal option name from options:
+    option = options.get(option_name, UNKNOWN_OPTION)
+
+    # If option exists but is False, treat like if not was there
+    if option is False:
+        option = UNKNOWN_OPTION
+
+    # if option is unknown, try to get as a <variable>
+    if option is UNKNOWN_OPTION:
+        option = options.get('<{}>'.format(option_name), UNKNOWN_OPTION)
+
+    # if option is unknown, try to get as a --doubledashed option
+    if option is UNKNOWN_OPTION:
+        option = options.get('--{}'.format(option_name), UNKNOWN_OPTION)
+
+    # if option is unknown, try to get as a -dashed option
+    if option is UNKNOWN_OPTION:
+        option = options.get('-{}'.format(option_name), UNKNOWN_OPTION)
+
+    # if option is unknown or has a false value
+    if option is UNKNOWN_OPTION or option is False:
+        if default is not DEFAULT_VALUE:
+            option = default
+        else:
+            option = askOption(option_name)
+
+    return option
 
 
 def getConfiguration(config_file_option):
@@ -37,7 +66,7 @@ def padded_error(string):
 
 
 def padded_log(string, filters=[]):
-    print term.normal + '    {}\n'.format(string) + term.normal
+    print term.normal + '    {}'.format(string) + term.normal
 
 
 def step_log(string):
