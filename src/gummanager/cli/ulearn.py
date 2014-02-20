@@ -59,7 +59,7 @@ class ULearnTarget(GenwebTarget):
         padded_log('Checking mountpoint ...')
         if environment and mountpoint:
             if not self.Server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
-                print "This mountpoint is unavailable"
+                padded_error("This mountpoint is unavailable")
                 return
             create = True
         else:
@@ -69,7 +69,7 @@ class ULearnTarget(GenwebTarget):
                 mountpoint = available_mountpoint['id']
                 create = True
             else:
-                print "There's no available mountpoint in any environment"
+                padded_error("There's no available mountpoint in any environment")
                 return
 
         if create:
