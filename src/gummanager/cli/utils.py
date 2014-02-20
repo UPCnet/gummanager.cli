@@ -27,7 +27,7 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE):
     option = options.get(option_name, UNKNOWN_OPTION)
 
     # If option exists but is False, treat like if not was there
-    if option is False:
+    if option in [False, None]:
         option = UNKNOWN_OPTION
 
     # if option is unknown, try to get as a <variable>
@@ -43,7 +43,7 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE):
         option = options.get('-{}'.format(option_name), UNKNOWN_OPTION)
 
     # if option is unknown or has a false value
-    if option is UNKNOWN_OPTION or option is False:
+    if option is UNKNOWN_OPTION or option in [False, None]:
         if default is not DEFAULT_VALUE:
             option = default
         else:
