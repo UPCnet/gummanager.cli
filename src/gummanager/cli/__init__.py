@@ -11,6 +11,7 @@ Usage:
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]
     gum oauth list instances [-c]
     gum oauth status [<instance-name>] [-c]
+    gum oauth test <instance-name> [-c]
     gum oauth get available port [-c]
     gum oauth <instance-name> (start|stop) [-c]
     gum oauth reload nginx [-c]

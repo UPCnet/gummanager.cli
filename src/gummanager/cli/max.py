@@ -8,7 +8,7 @@ from pprint import pprint
 
 class MaxTarget(Target):
     actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'configure']
-    subtargets = ['instance', 'instances', 'available']
+    subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
@@ -37,9 +37,9 @@ class MaxTarget(Target):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = MaxServer(**self.config)
         status = maxserver.get_status(instance_name)
-        if status['status'] == 'active':
+        if status['status']['max'] == 'active':
             print '\nAlready running\n'
-        if status['status'] in ['stopped', 'unknown']:
+        if status['status']['max'] in ['stopped', 'unknown']:
             maxserver.start(instance_name)
 
     def stop(self, **kwargs):

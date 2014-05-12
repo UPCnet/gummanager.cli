@@ -8,7 +8,7 @@ from pprint import pprint
 
 
 class OauthTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -63,6 +63,11 @@ class OauthTarget(Target):
         oauth = OauthServer(**self.config)
         port = oauth.get_available_port()
         print port
+
+    def test(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
+        oauth = OauthServer(**self.config)
+        oauth.test(instance_name)
 
     def status(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
