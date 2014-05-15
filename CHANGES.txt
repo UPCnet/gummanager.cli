@@ -1,11 +1,12 @@
 Changelog
 =========
 
-1.1 (unreleased)
+1.1 (2014-05-15)
 ----------------
 
-- Nothing changed yet.
-
+* Fix max commands [Carles Bruguera]
+* Prettify logs [Carles Bruguera]
+* Error on treating empty options [Carles Bruguera]
 
 1.0 (2014-02-20)
 ----------------
