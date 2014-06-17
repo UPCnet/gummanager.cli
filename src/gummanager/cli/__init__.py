@@ -6,7 +6,7 @@ Usage:
     gum ldap info [-c]
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
-    gum ldap <branch-name> add user <ldap-username> [-c]
+    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
     gum ldap list branches [-c]
     gum oauth info [-c]
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]
@@ -67,7 +67,6 @@ SUBTARGETS = {
 
 
 def main():
-    import ipdb;ipdb.set_trace()
     arguments = docopt.docopt(__doc__, version='GUM Cli 1.0')
 
     targets = [arg_name for arg_name, arg_value in arguments.items() if arg_name in TARGETS and arg_value is True]

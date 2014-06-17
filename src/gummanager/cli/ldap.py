@@ -22,14 +22,13 @@ class LdapTarget(Target):
         username = getOptionFrom(kwargs, 'ldap-username')
 
         # password opcional a demanar o passat per parametres
-
+        password = getOptionFrom(kwargs, 'password')
         ld = LdapServer(**self.config)
         ld.connect()
 
         self.cd('/')
         self.cd('ou={}'.format(branch_name))
-        self.addUser(username, username, password)
-        ld.add_user(username, branch=branch_name)
+        ld.addUser(username, username, password)
         ld.disconnect()
 
     def list_branches(self, **kwargs):
