@@ -6,6 +6,7 @@ Usage:
     gum ldap info [-c]
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
+    gum ldap <branch-name> add user <ldap-username> [-c]
     gum ldap list branches [-c]
     gum oauth info [-c]
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]
@@ -21,6 +22,7 @@ Usage:
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]
     gum max <instance-name> (start|stop) [-c]
+    gum max <instance-name> test [-c]
     gum max reload nginx [-c]
     gum genweb list instances [-c]
     gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
@@ -65,6 +67,7 @@ SUBTARGETS = {
 
 
 def main():
+    import ipdb;ipdb.set_trace()
     arguments = docopt.docopt(__doc__, version='GUM Cli 1.0')
 
     targets = [arg_name for arg_name, arg_value in arguments.items() if arg_name in TARGETS and arg_value is True]

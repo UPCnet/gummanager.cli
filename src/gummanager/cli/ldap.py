@@ -6,7 +6,7 @@ from pprint import pprint
 
 class LdapTarget(Target):
     actions = ['add', 'list', 'del', 'info']
-    subtargets = ['branch', 'branches']
+    subtargets = ['branch', 'branches', 'user']
 
     def add_branch(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
@@ -15,6 +15,21 @@ class LdapTarget(Target):
         ld.connect()
 
         ld.add_branch(branch_name)
+        ld.disconnect()
+
+    def add_user(self, **kwargs):
+        branch_name = getOptionFrom(kwargs, 'branch-name')
+        username = getOptionFrom(kwargs, 'ldap-username')
+
+        # password opcional a demanar o passat per parametres
+
+        ld = LdapServer(**self.config)
+        ld.connect()
+
+        self.cd('/')
+        self.cd('ou={}'.format(branch_name))
+        self.addUser(username, username, password)
+        ld.add_user(username, branch=branch_name)
         ld.disconnect()
 
     def list_branches(self, **kwargs):

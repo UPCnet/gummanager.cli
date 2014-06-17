@@ -7,7 +7,7 @@ from pprint import pprint
 
 
 class MaxTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'configure']
+    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -32,6 +32,11 @@ class MaxTarget(Target):
         """.format(instance_name, self.config['server'], port_index, oauth_instance)
         if ask_confirmation(message):
             maxserver.new_instance(instance_name, port_index, oauth_instance=oauth_instance)
+
+    def test(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = MaxServer(**self.config)
+        maxserver.test(instance_name)
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
