@@ -28,6 +28,7 @@ class LdapTarget(Target):
 
         ld.cd('/')
         ld.cd('ou={}'.format(branch_name))
+        ld.cd('ou=users'.format(branch_name))
         ld.addUser(username, username, password)
         ld.disconnect()
 
