@@ -26,8 +26,8 @@ class LdapTarget(Target):
         ld = LdapServer(**self.config)
         ld.connect()
 
-        self.cd('/')
-        self.cd('ou={}'.format(branch_name))
+        ld.cd('/')
+        ld.cd('ou={}'.format(branch_name))
         ld.addUser(username, username, password)
         ld.disconnect()
 
