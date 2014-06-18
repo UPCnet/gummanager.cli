@@ -7,6 +7,7 @@ Usage:
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
     gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
+    gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>][-c]
     gum ldap list branches [-c]
     gum oauth info [-c]
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]

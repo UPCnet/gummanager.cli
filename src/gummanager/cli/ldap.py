@@ -1,11 +1,15 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import getOptionFrom, GUMTable, get_length
 from gummanager.libs import LdapServer
+from gummanager.libs._ldap import LDAP_INVALID_CREDENTIALS, LDAP_USER_NOT_FOUND
 from pprint import pprint
+from blessings import Terminal
+
+term = Terminal()
 
 
 class LdapTarget(Target):
-    actions = ['add', 'list', 'del', 'info']
+    actions = ['add', 'list', 'del', 'info', 'check']
     subtargets = ['branch', 'branches', 'user']
 
     def add_branch(self, **kwargs):
@@ -20,17 +24,32 @@ class LdapTarget(Target):
     def add_user(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
-
-        # password opcional a demanar o passat per parametres
         password = getOptionFrom(kwargs, 'password')
         ld = LdapServer(**self.config)
         ld.connect()
 
         ld.cd('/')
-        ld.cd('ou={}'.format(branch_name))
-        ld.cd('ou=users'.format(branch_name))
+        ld.cd('ou=users,ou={}'.format(branch_name))
         ld.addUser(username, username, password)
         ld.disconnect()
+
+    def check_user(self, **kwargs):
+        branch_name = getOptionFrom(kwargs, 'branch-name')
+        username = getOptionFrom(kwargs, 'ldap-username')
+        password = getOptionFrom(kwargs, 'password')
+        ld = LdapServer(**self.config)
+        ld.connect()
+        result = ld.authenticate(username, password, branch=branch_name)
+        ld.disconnect()
+
+        if result is True:
+            print term.green, "\n    User {} exists and matches provided password".format(username)
+        elif result is LDAP_USER_NOT_FOUND:
+            print term.red, "\n    User {} doesn't exists in branch {}".format(username, branch_name)
+        elif result is LDAP_INVALID_CREDENTIALS:
+            print term.red, "\n    User {} exists but passwords do not match".format(username)
+
+        print term.normal
 
     def list_branches(self, **kwargs):
         ld = LdapServer(**self.config)
