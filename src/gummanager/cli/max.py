@@ -3,6 +3,8 @@ from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import highlighter, ask_confirmation
 from gummanager.libs import MaxServer
+from gummanager.cli.utils import getConfiguration
+from gummanager.libs import OauthServer
 from pprint import pprint
 
 
@@ -35,8 +37,17 @@ class MaxTarget(Target):
 
     def test(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
+
         maxserver = MaxServer(**self.config)
-        maxserver.test(instance_name)
+        instance_info = maxserver.get_instance(instance_name)
+
+        oauth_config = getConfiguration(kwargs['--config'])['oauth']
+        oauthserver = OauthServer(**oauth_config)
+        oauth_info = oauthserver.instance_by_dns(instance_info['oauth'])
+        ldap_branch = oauth_info['ldap']['branch']
+        ldap_branch = oauth_info['ldap']['branch']
+
+        maxserver.test(instance_name, ldap_branch)
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
