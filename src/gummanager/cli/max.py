@@ -49,6 +49,8 @@ class MaxTarget(Target):
 
         maxserver.test(instance_name, ldap_branch)
 
+        print 'Test end'
+
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = MaxServer(**self.config)
