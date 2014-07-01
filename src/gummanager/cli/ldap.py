@@ -27,6 +27,7 @@ class LdapTarget(Target):
         password = getOptionFrom(kwargs, 'password')
         ld = LdapServer(**self.config)
         ld.connect()
+        ld.authenticate(username='ldap', password='secret', branch=branch_name, userdn=False)
 
         ld.cd('/')
         ld.cd('ou=users,ou={}'.format(branch_name))
