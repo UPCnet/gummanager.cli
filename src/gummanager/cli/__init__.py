@@ -23,7 +23,6 @@ Usage:
     gum max status [<instance-name>] [-c]
     gum max get available port [-c]
     gum max <instance-name> (start|stop) [-c]
-    gum max <instance-name> test [-c]
     gum max reload nginx [-c]
     gum genweb list instances [-c]
     gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
@@ -32,6 +31,7 @@ Usage:
     gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-c -f]
     gum ulearn get available mountpoint [-c]
     gum ulearn reload nginx [-c]
+    gum utalk test <domain> [-c]
 
 
 Options:
@@ -46,6 +46,7 @@ from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.max import MaxTarget
 from gummanager.cli.genweb import GenwebTarget
 from gummanager.cli.ulearn import ULearnTarget
+from gummanager.cli.utalk import UTalkTarget
 
 from gummanager.cli.utils import getConfiguration
 import sys
@@ -59,6 +60,7 @@ TARGETS = {
     'max': MaxTarget,
     'genweb': GenwebTarget,
     'ulearn': ULearnTarget,
+    'utalk': UTalkTarget,
 
 }
 
