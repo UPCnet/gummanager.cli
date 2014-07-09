@@ -87,10 +87,13 @@ def print_message(code, message):
 class GUMTable(prettytable.PrettyTable):
 
     def __init__(self, *args, **kwargs):
+        hrules = kwargs.get('hrules', 'ALL')
+        kwargs['hrules'] = getattr(prettytable, hrules)
+
         super(GUMTable, self).__init__(*args, **kwargs)
+
         self.table_header_style = term.bold
 
-        self.hrules = prettytable.ALL
         self.vertical_char = term.black('|')
         self.horizontal_char = term.black('-')
         self.junction_char = term.black('-')

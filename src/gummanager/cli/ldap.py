@@ -1,5 +1,5 @@
 from gummanager.cli.target import Target
-from gummanager.cli.utils import getOptionFrom, GUMTable, get_length
+from gummanager.cli.utils import getOptionFrom, GUMTable, get_length, highlighter
 from gummanager.libs import LdapServer
 from gummanager.libs._ldap import LDAP_INVALID_CREDENTIALS, LDAP_USER_NOT_FOUND
 from pprint import pprint
@@ -9,8 +9,8 @@ term = Terminal()
 
 
 class LdapTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'check']
-    subtargets = ['branch', 'branches', 'user']
+    actions = ['add', 'list', 'delete', 'info', 'check']
+    subtargets = ['branch', 'branches', 'user', 'users']
 
     def add_branch(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
@@ -35,6 +35,19 @@ class LdapTarget(Target):
         ld.addUser(username, username, password)
         ld.disconnect()
 
+    def delete_user(self, **kwargs):
+        branch_name = getOptionFrom(kwargs, 'branch-name')
+        username = getOptionFrom(kwargs, 'ldap-username')
+
+        ld = LdapServer(**self.config)
+        ld.connect()
+        #ld.authenticate(username='ldap', password='secret', branch=branch_name, userdn=False)
+
+        ld.cd('/')
+        ld.cd('ou=users,ou={}'.format(branch_name))
+        ld.delUser(username)
+        ld.disconnect()
+
     def check_user(self, **kwargs):
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
@@ -52,6 +65,27 @@ class LdapTarget(Target):
             print term.red, "\n    User {} exists but passwords do not match".format(username)
 
         print term.normal
+
+    def list_users(self, **kwargs):
+        ld = LdapServer(**self.config)
+        branch_name = getOptionFrom(kwargs, 'branch-name')
+        u_filter = getOptionFrom(kwargs, 'filter', default=None)
+        ld.connect()
+
+        users = ld.get_branch_users(branch_name, filter=u_filter)
+        table = GUMTable(hrules='FRAME')
+        table.from_dict_list(
+            users,
+            formatters={
+                'name': highlighter(default='bold_yellow')
+            },
+            titles={
+                'name': 'Username',
+                'sn': 'SN'
+            })
+        print table.sorted('name')
+
+        ld.disconnect()
 
     def list_branches(self, **kwargs):
         ld = LdapServer(**self.config)
