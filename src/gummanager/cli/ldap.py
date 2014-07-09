@@ -37,7 +37,11 @@ class LdapTarget(Target):
 
         ld = LdapServer(**self.config)
         ld.connect(auth=False)
-        ld.authenticate(username='ldap', password='secret', branch=branch_name, userdn=False)
+        ld.authenticate(
+            username=self.config['branch_admin_cn'],
+            password=self.config['branch_admin_password'],
+            branch=branch_name,
+            userdn=False)
 
         ld.cd('/')
         ld.cd('ou=users,ou={}'.format(branch_name))
@@ -53,7 +57,6 @@ class LdapTarget(Target):
 
         ld = LdapServer(**self.config)
         ld.connect()
-        #ld.authenticate(username='ldap', password='secret', branch=branch_name, userdn=False)
 
         ld.cd('/')
         ld.cd('ou=users,ou={}'.format(branch_name))
