@@ -41,7 +41,7 @@ class LdapTarget(Target):
         password = getOptionFrom(kwargs, 'password')
         ld = LdapServer(**self.config)
         ld.connect()
-        result = ld.authenticate(username, password, branch=branch_name)
+        result = ld.authenticate(username, password, branch=branch_name, userdn=True)
         ld.disconnect()
 
         if result is True:
