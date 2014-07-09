@@ -1,16 +1,13 @@
 from gummanager.cli.target import Target
-from gummanager.cli.utils import getOptionFrom
-from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import highlighter, ask_confirmation
-from gummanager.libs import MaxServer
 from gummanager.cli.utils import getConfiguration
+from gummanager.cli.utils import getOptionFrom
+from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
 from gummanager.libs import UTalkServer
-from pprint import pprint
 
 
 class UTalkTarget(Target):
-    actions = ['test', 'info']
+    _actions = ['test']
     subtargets = []
 
     def test(self, **kwargs):
@@ -30,8 +27,3 @@ class UTalkTarget(Target):
 
         utalk = UTalkServer(**configuration)
         utalk.test(instance_name)
-
-    def info(self, **kwargs):
-        print
-        pprint(self.config)
-        print

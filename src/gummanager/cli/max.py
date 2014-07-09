@@ -1,15 +1,15 @@
 from gummanager.cli.target import Target
-from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import highlighter, ask_confirmation
-from gummanager.libs import MaxServer
+from gummanager.cli.utils import ask_confirmation
 from gummanager.cli.utils import getConfiguration
+from gummanager.cli.utils import getOptionFrom
+from gummanager.cli.utils import highlighter
+from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
-from pprint import pprint
 
 
 class MaxTarget(Target):
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -129,8 +129,3 @@ class MaxTarget(Target):
                 'circus': ' Circus'
             })
         print table.sorted('port_index')
-
-    def info(self, **kwargs):
-        print
-        pprint(self.config)
-        print

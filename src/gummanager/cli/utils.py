@@ -3,6 +3,7 @@ import json
 import prettytable
 from blessings import Terminal
 from functools import partial
+from getpass import getpass
 import re
 
 term = Terminal()
@@ -17,11 +18,12 @@ def ask_confirmation(message):
     return value.strip().upper() == 'Y'
 
 
-def askOption(option_name):
-    return raw_input('Enter value for required "{}" option: '.format(option_name))
+def askOption(option_name, mask=False):
+    input_getter = getpass if mask else raw_input
+    return input_getter('Enter value for required "{}" option: '.format(option_name))
 
 
-def getOptionFrom(options, option_name, default=DEFAULT_VALUE):
+def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):
 
     # Try to get literal option name from options:
     option = options.get(option_name, UNKNOWN_OPTION)
@@ -47,7 +49,7 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE):
         if default is not DEFAULT_VALUE:
             option = default
         else:
-            option = askOption(option_name)
+            option = askOption(option_name, mask)
 
     return option
 

@@ -1,18 +1,24 @@
-from gummanager.cli.target import Target
-from gummanager.cli.utils import getOptionFrom, GUMTable, get_length, highlighter
-from gummanager.libs import LdapServer
-from gummanager.libs._ldap import LDAP_INVALID_CREDENTIALS, LDAP_USER_NOT_FOUND
-from pprint import pprint
 from blessings import Terminal
+from gummanager.cli.target import Target
+from gummanager.cli.utils import GUMTable
+from gummanager.cli.utils import getOptionFrom
+from gummanager.cli.utils import get_length
+from gummanager.cli.utils import highlighter
+from gummanager.libs import LdapServer
+from gummanager.libs._ldap import LDAP_INVALID_CREDENTIALS
+from gummanager.libs._ldap import LDAP_USER_NOT_FOUND
 
 term = Terminal()
 
 
 class LdapTarget(Target):
-    actions = ['add', 'list', 'delete', 'info', 'check']
+    _actions = ['add', 'list', 'delete', 'check']
     subtargets = ['branch', 'branches', 'user', 'users']
 
     def add_branch(self, **kwargs):
+        """
+            Adds a new branch named <branch-name> on the root of the ldap server
+        """
         branch_name = getOptionFrom(kwargs, 'branch-name')
 
         ld = LdapServer(**self.config)
@@ -22,9 +28,12 @@ class LdapTarget(Target):
         ld.disconnect()
 
     def add_user(self, **kwargs):
+        """
+            Adds a new user on the users folder of the branch specified by <branch-name>
+        """
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
-        password = getOptionFrom(kwargs, 'password')
+        password = getOptionFrom(kwargs, 'password', mask=True)
 
         ld = LdapServer(**self.config)
         ld.connect(auth=False)
@@ -36,6 +45,9 @@ class LdapTarget(Target):
         ld.disconnect()
 
     def delete_user(self, **kwargs):
+        """
+            Deletes a single user from the users folder of the branch specified by <branch-name>
+        """
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
 
@@ -49,9 +61,13 @@ class LdapTarget(Target):
         ld.disconnect()
 
     def check_user(self, **kwargs):
+        """
+            Checks existence and password of a user on the users folder of the branch specified by <branch-name>
+        """
+
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
-        password = getOptionFrom(kwargs, 'password')
+        password = getOptionFrom(kwargs, 'password', mask=True)
         ld = LdapServer(**self.config)
         ld.connect()
         result = ld.authenticate(username, password, branch=branch_name, userdn=True)
@@ -67,6 +83,11 @@ class LdapTarget(Target):
         print term.normal
 
     def list_users(self, **kwargs):
+        """
+            Prints a list of all the users of the branch specified by <branch-name>, sorted by username
+            You can filter the results (case insensitive) with the --filter=<text> option
+        """
+
         ld = LdapServer(**self.config)
         branch_name = getOptionFrom(kwargs, 'branch-name')
         u_filter = getOptionFrom(kwargs, 'filter', default=None)
@@ -88,6 +109,11 @@ class LdapTarget(Target):
         ld.disconnect()
 
     def list_branches(self, **kwargs):
+        """
+            Prints a list of all the branches on the ldap server
+            For each branch, a count of users and groups is dusplayed
+        """
+
         ld = LdapServer(**self.config)
         ld.connect()
 
@@ -107,8 +133,3 @@ class LdapTarget(Target):
         print table.sorted('name')
 
         ld.disconnect()
-
-    def info(self, **kwargs):
-        print
-        pprint(self.config)
-        print

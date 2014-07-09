@@ -7,10 +7,11 @@ Usage:
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
     gum ldap list branches [-c]
-    gum ldap <branch-name> list users (--filter=<username-filter>)[-c]
+    gum ldap <branch-name> list users (--filter=<text>)[-c]
     gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
     gum ldap <branch-name> delete user <ldap-username> [-c]
     gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>][-c]
+    gum ldap help <command>...
     gum oauth info [-c]
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]
     gum oauth list instances [-c]
@@ -26,18 +27,20 @@ Usage:
     gum max get available port [-c]
     gum max <instance-name> (start|stop) [-c]
     gum max reload nginx [-c]
+    gum genweb info [-c]
     gum genweb list instances [-c]
     gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
     gum genweb get available mountpoint [-c]
+    gum ulearn info [-c]
     gum ulearn list instances [-c]
     gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-c -f]
     gum ulearn get available mountpoint [-c]
     gum ulearn reload nginx [-c]
+    gum utalk info [-c]
     gum utalk test <domain> [-c]
 
 
 Options:
-  -h --help           Show this screen.
   -v --version        Show version.
   -c --config         Use this file for default settings.
 """
@@ -50,7 +53,7 @@ from gummanager.cli.genweb import GenwebTarget
 from gummanager.cli.ulearn import ULearnTarget
 from gummanager.cli.utalk import UTalkTarget
 
-from gummanager.cli.utils import getConfiguration
+from gummanager.cli.utils import getConfiguration, getOptionFrom
 import sys
 import patches
 
@@ -74,6 +77,14 @@ SUBTARGETS = {
 def main():
     arguments = docopt.docopt(__doc__, version='GUM Cli 1.0')
 
+    help_mode = False
+    if arguments['help']:
+        help_mode = True
+        arguments['help'] = False
+        for cmd in getOptionFrom(arguments, 'command'):
+            if cmd in arguments:
+                arguments[cmd] = True
+
     targets = [arg_name for arg_name, arg_value in arguments.items() if arg_name in TARGETS and arg_value is True]
     if targets == []:
         print 'No such target "{}"'.format(sys.argv[1])
@@ -83,11 +94,13 @@ def main():
     config = getConfiguration(arguments['--config'])
     target_config = config.get(target_name, {})
     target = TARGETS[target_name](target_config)
-
     action_method_name = target.forge_command_from_arguments(arguments)
 
     target_method = getattr(target, action_method_name, None)
     if target_method is None:
         sys.exit('Not Implemented: {}'.format(action_method_name))
 
-    target_method(**arguments)
+    if help_mode:
+        target.help(action_method_name)
+    else:
+        target_method(**arguments)

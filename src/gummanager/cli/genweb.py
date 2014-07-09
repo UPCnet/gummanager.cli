@@ -1,14 +1,15 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import GUMTable
+from gummanager.cli.utils import ask_confirmation
+from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import highlighter
-from gummanager.cli.utils import getOptionFrom, print_message, ask_confirmation
+from gummanager.cli.utils import print_message
 from gummanager.libs import GenwebServer
-from pprint import pprint
 
 
 class GenwebTarget(Target):
     server_klass = GenwebServer
-    actions = ['add', 'list', 'del', 'info', 'get', 'status', 'reload']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'reload']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['mountpoint']
 
@@ -75,7 +76,3 @@ class GenwebTarget(Target):
                     if code == 0:
                         return None
 
-    def info(self, **kwargs):
-        print
-        pprint(self.config)
-        print
