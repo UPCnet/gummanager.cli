@@ -13,6 +13,13 @@ class OauthTarget(Target):
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
+        """
+            Adds a new oauth instance.
+
+            If only <instance-name> is given, gum will pick the first available <port-index>
+            based on the existing instances, and assume branch <ldap-name> named as the <instance-name>.
+            If you want to use a specific port index or ldap name, please specify it.
+        """
         params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         params.update(self.config)
         oauth = OauthServer(**params)

@@ -20,6 +20,7 @@ Usage:
     gum oauth get available port [-c]
     gum oauth <instance-name> (start|stop) [-c]
     gum oauth reload nginx [-c]
+    gum oauth help <command>...
     gum max info [-c]
     gum max add instance <instance-name> [--port-index=<port-index> --oauth-instance=<oauth-name>] [-c]
     gum max list instances [-c]
