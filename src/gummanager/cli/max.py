@@ -14,6 +14,13 @@ class MaxTarget(Target):
     extratargets = ['port']
 
     def add_instance(self, **kwargs):
+        """
+            Adds a new max instance.
+
+            If only <instance-name> is given, gum will pick the first available <port-index>
+            based on the existing instances, and assume <oauth-name> named as the <instance-name>.
+            If you want to use a specific port index or oauth instance please specify it.
+        """
         maxserver = MaxServer(**self.config)
 
         instance_name = getOptionFrom(kwargs, 'instance-name')

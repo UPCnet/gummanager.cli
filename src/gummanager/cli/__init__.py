@@ -28,6 +28,7 @@ Usage:
     gum max get available port [-c]
     gum max <instance-name> (start|stop) [-c]
     gum max reload nginx [-c]
+    gum max help <command>...
     gum genweb info [-c]
     gum genweb list instances [-c]
     gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
