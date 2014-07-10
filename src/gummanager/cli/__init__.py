@@ -39,6 +39,7 @@ Usage:
     gum ulearn get available mountpoint [-c]
     gum ulearn reload nginx [-c]
     gum utalk info [-c]
+    gum utalk add instance <instance-name>
     gum utalk test <domain> [-c]
 
 

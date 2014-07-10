@@ -7,8 +7,8 @@ from gummanager.libs import UTalkServer
 
 
 class UTalkTarget(Target):
-    _actions = ['test']
-    subtargets = []
+    _actions = ['test', 'add']
+    subtargets = ['instance']
 
     def test(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'domain')
