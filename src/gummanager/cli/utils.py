@@ -19,7 +19,6 @@ class ConfigWrapper(dict):
         wrapper = cls()
 
         def wrap(wvalue):
-            print wvalue
             if isinstance(wvalue, dict):
                 return ConfigWrapper.from_dict(wvalue)
             elif isinstance(wvalue, list):
@@ -35,6 +34,15 @@ class ConfigWrapper(dict):
             wrapper[key] = wrapped
 
         return wrapper
+
+    def __getattr__(self, key):
+        if self.get(key):
+            return self[key]
+
+        is_password = 'password' in key.lower()
+        value = askOption(key, is_password)
+        self[key] = value
+        return value
 
 
 def ask_confirmation(message):

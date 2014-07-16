@@ -117,7 +117,7 @@ class LdapTarget(Target):
             For each branch, a count of users and groups is dusplayed
         """
 
-        ld = LdapServer(**self.config)
+        ld = LdapServer(self.config)
         ld.connect()
 
         branches = ld.get_branches()
