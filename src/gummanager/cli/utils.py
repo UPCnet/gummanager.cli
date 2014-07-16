@@ -12,6 +12,31 @@ UNKNOWN_OPTION = object()
 DEFAULT_VALUE = object()
 
 
+class ConfigWrapper(dict):
+
+    @classmethod
+    def from_dict(cls, config):
+        wrapper = cls()
+
+        def wrap(wvalue):
+            print wvalue
+            if isinstance(wvalue, dict):
+                return ConfigWrapper.from_dict(wvalue)
+            elif isinstance(wvalue, list):
+                wrapped_list = []
+                for item in wvalue:
+                    wrapped_list.append(wrap(item))
+                return wrapped_list
+            else:
+                return wvalue
+
+        for key, value in config.items():
+            wrapped = wrap(value)
+            wrapper[key] = wrapped
+
+        return wrapper
+
+
 def ask_confirmation(message):
     print term.yellow(message)
     value = raw_input('    Proceed?  (Y, N): ')
@@ -56,7 +81,8 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):
 
 def getConfiguration(config_file_option):
     config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
-    return json.loads(open(config_file).read())
+    parsed_config = json.loads(open(config_file).read())
+    return ConfigWrapper.from_dict(parsed_config)
 
 
 def padded_success(string):

@@ -57,6 +57,7 @@ from gummanager.cli.ulearn import ULearnTarget
 from gummanager.cli.utalk import UTalkTarget
 
 from gummanager.cli.utils import getConfiguration, getOptionFrom
+
 import sys
 import patches
 
