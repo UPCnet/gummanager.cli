@@ -9,6 +9,7 @@ from gummanager.libs import OauthServer
 
 
 class MaxTarget(Target):
+    server_klass = MaxServer
     _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
@@ -21,7 +22,7 @@ class MaxTarget(Target):
             based on the existing instances, and assume <oauth-name> named as the <instance-name>.
             If you want to use a specific port index or oauth instance please specify it.
         """
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')
         port_index = getOptionFrom(kwargs, 'port-index', maxserver.get_available_port())
@@ -45,7 +46,7 @@ class MaxTarget(Target):
     def test(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
 
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         instance_info = maxserver.get_instance(instance_name)
 
         oauth_config = getConfiguration(kwargs['--config'])['oauth']
@@ -60,7 +61,7 @@ class MaxTarget(Target):
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         status = maxserver.get_status(instance_name)
         if status['status']['max'] == 'active':
             print '\nAlready running\n'
@@ -69,7 +70,7 @@ class MaxTarget(Target):
 
     def stop(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         status = maxserver.get_status(instance_name)
         if status['status'] == 'stopped':
             print '\nAlready stopped\n'
@@ -77,18 +78,18 @@ class MaxTarget(Target):
             maxserver.stop(instance_name)
 
     def reload_nginx(self, **kwargs):
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         maxserver.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         port = maxserver.get_available_port()
         print port
 
     def status(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
-        oauth = MaxServer(**self.config)
+        oauth = MaxSself.Server
         instances = oauth.get_instances()
         if instance_name != 'all':
             instances = [instance for instance in instances if instance['name'] == instance_name]
@@ -119,7 +120,7 @@ class MaxTarget(Target):
         print table.sorted('name')
 
     def list_instances(self, **kwargs):
-        maxserver = MaxServer(**self.config)
+        maxserver = self.Server
         instances = maxserver.get_instances()
         table = GUMTable()
         table.from_dict_list(

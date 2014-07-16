@@ -8,6 +8,7 @@ from gummanager.libs import OauthServer
 
 
 class OauthTarget(Target):
+    server_klass = OauthServer
     _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
@@ -22,7 +23,7 @@ class OauthTarget(Target):
         """
         params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         params.update(self.config)
-        oauth = OauthServer(**params)
+        oauth = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')
         port_index = getOptionFrom(kwargs, 'port-index', oauth.get_available_port())
@@ -46,7 +47,7 @@ class OauthTarget(Target):
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         status = oauth.get_status(instance_name)
         if status['status'] == 'active':
             print '\nAlready running\n'
@@ -55,7 +56,7 @@ class OauthTarget(Target):
 
     def stop(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         status = oauth.get_status(instance_name)
         if status['status'] == 'stopped':
             print '\nAlready stopped\n'
@@ -63,23 +64,23 @@ class OauthTarget(Target):
             oauth.stop(instance_name)
 
     def reload_nginx(self, **kwargs):
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         oauth.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         port = oauth.get_available_port()
         print port
 
     def test(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         oauth.test(instance_name)
 
     def status(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         instances = oauth.get_instances()
         if instance_name != 'all':
             instances = [instance for instance in instances if instance['name'] == instance_name]
@@ -111,7 +112,7 @@ class OauthTarget(Target):
 
     def list_instances(self, **kwargs):
 
-        oauth = OauthServer(**self.config)
+        oauth = self.Server
         instances = oauth.get_instances()
         table = GUMTable()
         table.from_dict_list(

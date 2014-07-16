@@ -15,7 +15,7 @@ class Target(object):
 
     @property
     def Server(self):
-        return self.server_klass(**self.config)
+        return self.server_klass(self.config)
 
     def __init__(self, config):
         self.config = config

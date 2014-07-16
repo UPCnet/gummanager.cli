@@ -12,6 +12,7 @@ term = Terminal()
 
 
 class LdapTarget(Target):
+    server_klass = LdapServer
     _actions = ['add', 'list', 'delete', 'check']
     subtargets = ['branch', 'branches', 'user', 'users']
 
@@ -21,7 +22,7 @@ class LdapTarget(Target):
         """
         branch_name = getOptionFrom(kwargs, 'branch-name')
 
-        ld = LdapServer(**self.config)
+        ld = self.Server
         ld.connect()
 
         ld.add_branch(branch_name)
@@ -35,7 +36,7 @@ class LdapTarget(Target):
         username = getOptionFrom(kwargs, 'ldap-username')
         password = getOptionFrom(kwargs, 'password', mask=True)
 
-        ld = LdapServer(**self.config)
+        ld = self.Server
         ld.connect(auth=False)
         ld.authenticate(
             username=self.config['branch_admin_cn'],
@@ -55,7 +56,7 @@ class LdapTarget(Target):
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
 
-        ld = LdapServer(**self.config)
+        ld = self.Server
         ld.connect()
 
         ld.cd('/')
@@ -71,7 +72,7 @@ class LdapTarget(Target):
         branch_name = getOptionFrom(kwargs, 'branch-name')
         username = getOptionFrom(kwargs, 'ldap-username')
         password = getOptionFrom(kwargs, 'password', mask=True)
-        ld = LdapServer(**self.config)
+        ld = self.Server
         ld.connect()
         result = ld.authenticate(username, password, branch=branch_name, userdn=True)
         ld.disconnect()
@@ -91,7 +92,7 @@ class LdapTarget(Target):
             You can filter the results (case insensitive) with the --filter=<text> option
         """
 
-        ld = LdapServer(**self.config)
+        ld = self.Server
         branch_name = getOptionFrom(kwargs, 'branch-name')
         u_filter = getOptionFrom(kwargs, 'filter', default=None)
         ld.connect()
@@ -117,7 +118,7 @@ class LdapTarget(Target):
             For each branch, a count of users and groups is dusplayed
         """
 
-        ld = LdapServer(self.config)
+        ld = self.Server
         ld.connect()
 
         branches = ld.get_branches()

@@ -7,6 +7,7 @@ from gummanager.libs import UTalkServer
 
 
 class UTalkTarget(Target):
+    server_klass = UTalkServer
     _actions = ['test', 'add']
     subtargets = ['instance']
 
@@ -25,5 +26,4 @@ class UTalkTarget(Target):
             oauthserver=oauthserver
         ))
 
-        utalk = UTalkServer(**configuration)
-        utalk.test(instance_name)
+        self.Server.test(instance_name)
