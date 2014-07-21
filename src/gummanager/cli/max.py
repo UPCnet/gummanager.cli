@@ -89,7 +89,7 @@ class MaxTarget(Target):
     def status(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
-        oauth = MaxSself.Server
+        oauth = self.Server
         instances = oauth.get_instances()
         if instance_name != 'all':
             instances = [instance for instance in instances if instance['name'] == instance_name]
