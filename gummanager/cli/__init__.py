@@ -7,7 +7,7 @@ Usage:
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
     gum ldap list branches [-c]
-    gum ldap <branch-name> list users (--filter=<text>)[-c]
+    gum ldap <branch-name> list users [--filter=<text>][-c]
     gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
     gum ldap <branch-name> delete user <ldap-username> [-c]
     gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>][-c]
@@ -58,8 +58,9 @@ from gummanager.cli.utalk import UTalkTarget
 
 from gummanager.cli.utils import getConfiguration, getOptionFrom
 
-import sys
 import patches
+import pkg_resources
+import sys
 
 patches = patches
 
@@ -79,7 +80,7 @@ SUBTARGETS = {
 
 
 def main():
-    arguments = docopt.docopt(__doc__, version='GUM Cli 1.0')
+    arguments = docopt.docopt(__doc__, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
 
     help_mode = False
     if arguments['help']:
@@ -108,3 +109,5 @@ def main():
         target.help(action_method_name)
     else:
         target_method(**arguments)
+
+

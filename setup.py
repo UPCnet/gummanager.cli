@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version = '1.2.dev0'
 
@@ -27,7 +27,7 @@ setup(name='gummanager.cli',
       author_email='carles.bruguera@upcnet.es',
       url='',
       license='gpl',
-      packages=['gummanager'],
+      packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['gummanager'],
       include_package_data=True,
       zip_safe=False,
