@@ -12,6 +12,26 @@ UNKNOWN_OPTION = object()
 DEFAULT_VALUE = object()
 
 
+def json_pretty_print(data, mask_passwords=False):
+    config = json.dumps(data, sort_keys=True, indent=4)[1:-1]
+    config = re.sub(r'([\{\}\[\]])', term.blue + r'\1' + term.normal, config)
+    if mask_passwords:
+        config = re.sub(r'"(.*?password.*?)": "(.*?)"', r'"\1": "***********"', config)
+    config = re.sub(r'"(.*?)":', r'{}\1{}:'.format(term.bold_yellow, term.normal), config)
+    return config
+
+
+def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
+    message = '\n    ' + term.green + title + '\n' + term.normal + json_pretty_print(params)
+    if ask_confirmation(message):
+        for code, message in recipe_method(*args, **kwargs):
+            print_message(code, message)
+            if code == 0:
+                return None
+    print
+    return True
+
+
 class ConfigWrapper(dict):
 
     @classmethod

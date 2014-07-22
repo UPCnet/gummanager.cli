@@ -21,8 +21,7 @@ class OauthTarget(Target):
             based on the existing instances, and assume branch <ldap-name> named as the <instance-name>.
             If you want to use a specific port index or ldap name, please specify it.
         """
-        params = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
-        params.update(self.config)
+        self.extra_config = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         oauth = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')

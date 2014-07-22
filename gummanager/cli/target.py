@@ -1,7 +1,8 @@
 import sys
-import json
-import re
+
 from blessings import Terminal
+from gummanager.cli.utils import json_pretty_print, ConfigWrapper
+
 
 term = Terminal()
 
@@ -15,9 +16,13 @@ class Target(object):
 
     @property
     def Server(self):
-        return self.server_klass(self.config)
+        config = {}
+        config.update(self.extra_config)
+        config.update(self.config)
+        return self.server_klass(ConfigWrapper.from_dict(config))
 
     def __init__(self, config):
+        self.extra_config = {}
         self.config = config
 
     @property
@@ -32,11 +37,7 @@ class Target(object):
 
     def info(self, **kwargs):
         print
-        config = json.dumps(self.config, sort_keys=True, indent=4)
-        config = re.sub(r'([\{\}\[\]])', term.blue + r'\1' + term.normal, config)
-        config = re.sub(r'"(.*?password.*?)": "(.*?)"', r'"\1": "***********"', config)
-        config = re.sub(r'"(.*?)":', r'"{}\1{}":'.format(term.bold_yellow, term.normal), config)
-        print config
+        print json_pretty_print(self.config, mask_passwords=True)
         print
 
     def forge_command_from_arguments(self, arguments):

@@ -6,6 +6,7 @@ from gummanager.cli.utils import padded_error
 from gummanager.cli.utils import padded_log
 from gummanager.cli.utils import print_message
 from gummanager.cli.utils import step_log
+from gummanager.cli.utils import run_recipe_with_confirmation
 from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
 from gummanager.libs import ULearnServer
@@ -32,7 +33,7 @@ class ULearnTarget(GenwebTarget):
 
         padded_log('Checking max server ...')
         max_config = getConfiguration(kwargs['--config'])['max']
-        maxserver = MaxServer(**max_config)
+        maxserver = MaxServer(max_config)
         max_instance = maxserver.get_instance(max_instance_name)
 
         if not max_instance:
@@ -44,7 +45,7 @@ class ULearnTarget(GenwebTarget):
         oauth_instance_name = oauth_server_url.split('/')[-1]
 
         oauth_config = getConfiguration(kwargs['--config'])['oauth']
-        oauthserver = OauthServer(**oauth_config)
+        oauthserver = OauthServer(oauth_config)
         oauth_instance = oauthserver.get_instance(oauth_instance_name)
 
         if not max_instance:
@@ -77,18 +78,16 @@ class ULearnTarget(GenwebTarget):
             title = siteid.capitalize()
             language = 'ca'
 
-            message = """
-    Adding a new Ulearn:
-        name: "{}"
-        server: "{}"
-        mountpoint: "{}"
-        oauth_instance: "{}"
-        ldap_branch: "{}"
-        max: "{}"
-
-            """.format(siteid, environment, mountpoint, max_instance['oauth'], ldap_branch, max_instance['server']['dns'])
-            if ask_confirmation(message):
-                for code, message in self.Server.new_instance(instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch):
-                    print_message(code, message)
-                    if code == 0:
-                        return None
+            run_recipe_with_confirmation(
+                "Adding a new Ulearn",
+                {
+                    "name": siteid,
+                    "server": environment,
+                    "mountpoint": mountpoint,
+                    "oauth_instance": max_instance['oauth'],
+                    "ldap_branch": ldap_branch,
+                    "max": max_instance['server']['dns']
+                },
+                self.Server.new_instance,
+                *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch]
+            )
