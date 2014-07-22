@@ -224,9 +224,13 @@ class LogEcho(threading.Thread):
         self.process = None
         self.finished = False
 
+    def kill(self):
+        print
+        self.process.kill()
+
     def run(self):
         def tail_log(line, stdin, process):
-            if self.process == None:
+            if self.process is None:
                 self.process = process
                 self.pacman = Pacman(text='    Progress')
 
