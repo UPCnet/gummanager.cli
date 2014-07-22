@@ -5,6 +5,11 @@ from blessings import Terminal
 from functools import partial
 from getpass import getpass
 import re
+import sys
+import threading
+
+from gummanager.libs.utils import RemoteConnection
+from gummanager.cli.pacmanprogressbar import Pacman
 
 term = Terminal()
 
@@ -109,8 +114,13 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):
 
 def getConfiguration(config_file_option):
     config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
-    parsed_config = json.loads(open(config_file).read())
-    return ConfigWrapper.from_dict(parsed_config)
+    try:
+        parsed_config = json.loads(open(config_file).read())
+    except:
+        padded_error('\nError loading {}, check json syntax'.format(config_file))
+        sys.exit(1)
+    else:
+        return ConfigWrapper.from_dict(parsed_config)
 
 
 def padded_success(string):
@@ -202,3 +212,35 @@ def highlighter(**kwargs):
 
 def get_length(value):
     return len(value)
+
+
+class LogEcho(threading.Thread):
+    def __init__(self, user, server, filename, target_lines):
+        self.logfile = filename
+        threading.Thread.__init__(self)
+        self.remote = RemoteConnection(user, server)
+        self.count = 0
+        self.target_lines = target_lines
+        self.process = None
+        self.finished = False
+
+    def run(self):
+        def tail_log(line, stdin, process):
+            if self.process == None:
+                self.process = process
+                self.pacman = Pacman(text='    Progress')
+
+            if 'INFO' in line and not self.finished:
+                self.count += 1
+                percent = (100 * self.count) / self.target_lines
+                percent = percent if percent <= 100 else 100
+                self.finished = percent == 100
+                self.pacman.progress(percent)
+
+        try:
+            code, stdout = self.remote.execute(
+                'tail -f {}'.format(self.logfile),
+                _out=tail_log
+            )
+        except:
+            pass

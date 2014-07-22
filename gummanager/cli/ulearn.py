@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
 from gummanager.cli.genweb import GenwebTarget
-from gummanager.cli.utils import ask_confirmation
+from gummanager.cli.utils import LogEcho
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import padded_error
 from gummanager.cli.utils import padded_log
-from gummanager.cli.utils import print_message
-from gummanager.cli.utils import step_log
 from gummanager.cli.utils import run_recipe_with_confirmation
+from gummanager.cli.utils import step_log
 from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
 from gummanager.libs import ULearnServer
@@ -78,6 +78,14 @@ class ULearnTarget(GenwebTarget):
             title = siteid.capitalize()
             language = 'ca'
 
+            env_params = self.Server.get_environment(environment)
+            logecho = LogEcho(
+                env_params.ssh_user,
+                env_params.server,
+                '{}/zc1.log'.format(env_params.log_folder),
+                target_lines=326,
+            )
+
             run_recipe_with_confirmation(
                 "Adding a new Ulearn",
                 {
@@ -89,5 +97,5 @@ class ULearnTarget(GenwebTarget):
                     "max": max_instance['server']['dns']
                 },
                 self.Server.new_instance,
-                *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch]
+                *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch, logecho]
             )

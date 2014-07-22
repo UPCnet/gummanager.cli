@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 from gummanager.cli.target import Target
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import ask_confirmation
+from gummanager.cli.utils import LogEcho
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import highlighter
-from gummanager.cli.utils import print_message
+from gummanager.cli.utils import run_recipe_with_confirmation
 from gummanager.libs import GenwebServer
 
 
@@ -61,18 +62,22 @@ class GenwebTarget(Target):
             title = siteid.capitalize()
             language = 'ca'
 
-            message = """
-        Adding a new Ulearn:
-            name: "{}"
-            server: "{}"
-            mountpoint: "{}"
-            ldap_branch: "{}"
+            env_params = self.Server.get_environment(environment)
+            logecho = LogEcho(
+                env_params.ssh_user,
+                env_params.server,
+                '{}/zc1.log'.format(env_params.log_folder),
+                target_lines=326,
+            )
 
-            """.format(siteid, environment, mountpoint, ldap_branch)
-            if ask_confirmation(message):
-
-                for code, message in self.Server.new_instance(instance_name, environment, mountpoint, title, language, ldap_branch):
-                    print_message(code, message)
-                    if code == 0:
-                        return None
-
+            run_recipe_with_confirmation(
+                "Adding a new Genweb",
+                {
+                    "name": siteid,
+                    "server": environment,
+                    "mountpoint": mountpoint,
+                    "ldap_branch": ldap_branch,
+                },
+                self.Server.new_instance,
+                *[instance_name, environment, mountpoint, title, language, ldap_branch, logecho]
+            )
