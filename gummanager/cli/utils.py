@@ -29,10 +29,13 @@ def json_pretty_print(data, mask_passwords=False):
 def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
     message = '\n    ' + term.green + title + '\n' + term.normal + json_pretty_print(params)
     if ask_confirmation(message):
-        for code, message in recipe_method(*args, **kwargs):
-            print_message(code, message)
-            if code == 0:
-                return None
+        for yielded in recipe_method(*args, **kwargs):
+            if not isinstance(yielded, list):
+                yielded = [yielded, ]
+            for code, message in yielded:
+                print_message(code, message)
+                if code == 0:
+                    return None
     print
     return True
 
@@ -132,7 +135,15 @@ def padded_error(string):
 
 
 def padded_log(string, filters=[]):
-    print term.normal + '    {}'.format(string) + term.normal
+    string = string.rstrip()
+    # apply padding to rewrite lines (starting with \r)
+    string = re.sub(r'([\r])', r'\1    ', string)
+    lines = string.split('\n')
+    for line in lines:
+        matched_filter = re.search(r'({})'.format('|'.join(filters)), line)
+        do_print = matched_filter or filters == []
+        if do_print:
+            print '    ' + line.rstrip()
 
 
 def step_log(string):
@@ -215,35 +226,51 @@ def get_length(value):
 
 
 class LogEcho(threading.Thread):
-    def __init__(self, user, server, filename, target_lines):
+    def __init__(self, user, server, filename, target_lines=None, filters=[]):
         self.logfile = filename
         threading.Thread.__init__(self)
         self.remote = RemoteConnection(user, server)
         self.count = 0
         self.target_lines = target_lines
+        self.show_progress_bar = self.target_lines is not None
         self.process = None
         self.finished = False
+        self.filters = filters
+        print self.logfile
 
-    def kill(self):
+    def stop(self):
         print
         self.process.kill()
 
     def run(self):
         def tail_log(line, stdin, process):
+            # At first line reception, store echo logger process
+            # and instantiate progress bar if needed
             if self.process is None:
                 self.process = process
-                self.pacman = Pacman(text='    Progress')
+                if self.show_progress_bar:
+                    self.pacman = Pacman(text='    Progress')
 
-            if 'INFO' in line and not self.finished:
-                self.count += 1
-                percent = (100 * self.count) / self.target_lines
-                percent = percent if percent <= 100 else 100
-                self.finished = percent == 100
-                self.pacman.progress(percent)
+            # Determine if we want to count/print the line based on filters setting
+            matched_filter = re.search(r'({})'.format('|'.join(self.filters)), line)
+            this_line_is_good = matched_filter or self.filters == []
+
+            # If line is good and we're not reached the 100%
+            if this_line_is_good and not self.finished:
+                # Update progress bar if in progressbar mode
+                if self.show_progress_bar:
+                    self.count += 1
+                    percent = (100 * self.count) / self.target_lines
+                    percent = percent if percent <= 100 else 100
+                    self.finished = percent == 100
+                    self.pacman.progress(percent)
+                # or print line
+                else:
+                    print '    ' + line.rstrip()
 
         try:
             code, stdout = self.remote.execute(
-                'tail -f {}'.format(self.logfile),
+                'tail -F -n0 {}'.format(self.logfile),
                 _out=tail_log
             )
         except:

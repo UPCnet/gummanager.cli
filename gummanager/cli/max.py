@@ -1,9 +1,8 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import ask_confirmation
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom
-from gummanager.cli.utils import highlighter
+from gummanager.cli.utils import highlighter, LogEcho
 from gummanager.cli.utils import run_recipe_with_confirmation
 from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
@@ -34,6 +33,13 @@ class MaxTarget(Target):
 
         oauth_instance = getOptionFrom(kwargs, 'oauth-instance', instance_name)
 
+        logecho = LogEcho(
+            self.config['ssh_user'],
+            self.config['server'],
+            '{}/{}/var/log/buildout.log'.format(self.config['instances_root'], instance_name),
+            filters=['Installing', 'Generated', 'Got', 'Updating'],
+        )
+
         run_recipe_with_confirmation(
             'Adding a new max server',
             {
@@ -44,6 +50,7 @@ class MaxTarget(Target):
             },
             maxserver.new_instance,
             instance_name, port_index,
+            logecho=logecho,
             oauth_instance=oauth_instance
         )
 

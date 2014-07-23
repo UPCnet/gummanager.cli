@@ -68,6 +68,7 @@ class GenwebTarget(Target):
                 env_params.server,
                 '{}/zc1.log'.format(env_params.log_folder),
                 target_lines=326,
+                filters=['INFO']
             )
 
             run_recipe_with_confirmation(
