@@ -3,7 +3,7 @@ from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import ask_confirmation
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom
-from gummanager.cli.utils import highlighter
+from gummanager.cli.utils import highlighter, run_recipe_with_confirmation, LogEcho
 from gummanager.libs import OauthServer
 
 
@@ -33,16 +33,26 @@ class OauthTarget(Target):
 
         ldap_name = getOptionFrom(kwargs, 'ldap-branch', instance_name)
 
-        message = """
-    Adding a new osiris OAuth server:
-        name: "{}"
-        server: "{}"
-        port_index: "{}"
-        ldap_branch: "{}"
+        logecho = LogEcho(
+            self.config['ssh_user'],
+            self.config['server'],
+            '{}/{}/var/log/buildout.log'.format(self.config['instances_root'], instance_name),
+            filters=['Installing', 'Generated', 'Got', 'Updating'],
+        )
 
-        """.format(instance_name, self.config['server'], port_index, ldap_name)
-        if ask_confirmation(message):
-            oauth.new_instance(instance_name, port_index, ldap_branch=ldap_name)
+        run_recipe_with_confirmation(
+            'Adding a new osiris OAuth server',
+            {
+                'name': instance_name,
+                'server': self.config['server'],
+                'port_index': port_index,
+                'ldap_branch': ldap_name
+            },
+            oauth.new_instance,
+            instance_name, port_index,
+            logecho=logecho,
+            ldap_branch=ldap_name
+        )
 
     def start(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')

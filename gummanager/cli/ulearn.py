@@ -73,6 +73,9 @@ class ULearnTarget(GenwebTarget):
                 padded_error("There's no available mountpoint in any environment")
                 return
 
+        ldap_config = getConfiguration(kwargs['--config'])['ldap']
+        ldap_password = ldap_config['branch_admin_password']
+
         if create:
             siteid = instance_name
             title = siteid.capitalize()
@@ -98,5 +101,5 @@ class ULearnTarget(GenwebTarget):
                     "max": max_instance['server']['dns']
                 },
                 self.Server.new_instance,
-                *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch, logecho]
+                *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch, ldap_password, logecho]
             )

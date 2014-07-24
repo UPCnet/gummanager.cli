@@ -4,7 +4,7 @@ from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import LogEcho
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import highlighter
-from gummanager.cli.utils import run_recipe_with_confirmation
+from gummanager.cli.utils import run_recipe_with_confirmation, getConfiguration
 from gummanager.libs import GenwebServer
 
 
@@ -57,6 +57,9 @@ class GenwebTarget(Target):
                 print "There's no available mountpoint in any environment"
                 return
 
+        ldap_config = getConfiguration(kwargs['--config'])['ldap']
+        ldap_password = ldap_config['branch_admin_password']
+
         if create:
             siteid = instance_name
             title = siteid.capitalize()
@@ -80,5 +83,5 @@ class GenwebTarget(Target):
                     "ldap_branch": ldap_branch,
                 },
                 self.Server.new_instance,
-                *[instance_name, environment, mountpoint, title, language, ldap_branch, logecho]
+                *[instance_name, environment, mountpoint, title, language, ldap_branch, ldap_password, logecho]
             )

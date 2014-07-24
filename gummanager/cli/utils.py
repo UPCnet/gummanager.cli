@@ -32,10 +32,12 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
         for yielded in recipe_method(*args, **kwargs):
             if not isinstance(yielded, list):
                 yielded = [yielded, ]
+
             for code, message in yielded:
                 print_message(code, message)
                 if code == 0:
                     return None
+
     print
     return True
 
