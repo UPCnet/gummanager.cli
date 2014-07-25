@@ -22,6 +22,7 @@ class MaxTarget(Target):
             based on the existing instances, and assume <oauth-name> named as the <instance-name>.
             If you want to use a specific port index or oauth instance please specify it.
         """
+        self.extra_config = {'utalk': getConfiguration(kwargs['--config'])['utalk']}
         maxserver = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')
@@ -51,7 +52,7 @@ class MaxTarget(Target):
             maxserver.new_instance,
             instance_name, port_index,
             logecho=logecho,
-            oauth_instance=oauth_instance
+            oauth_instance=oauth_instance,
         )
 
     def test(self, **kwargs):
