@@ -10,7 +10,7 @@ from gummanager.libs import OauthServer
 
 class MaxTarget(Target):
     server_klass = MaxServer
-    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test', 'upgrade']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -149,3 +149,25 @@ class MaxTarget(Target):
                 'circus': ' Circus'
             })
         print table.sorted('port_index')
+
+    def upgrade(self, **kwargs):
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = self.Server
+
+        logecho = LogEcho(
+            self.config['ssh_user'],
+            self.config['server'],
+            '{}/{}/var/log/buildout.log'.format(self.config['instances_root'], instance_name),
+            filters=['Installing', 'Got', 'Updating', 'Error'],
+        )
+
+        run_recipe_with_confirmation(
+            'Upgrading an existing max server',
+            {
+                'name': instance_name,
+                'server': self.config['server'],
+            },
+            maxserver.upgrade,
+            instance_name,
+            logecho=logecho,
+        )
