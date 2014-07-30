@@ -142,10 +142,19 @@ def extract_values(item, values, ns):
 
 
 def epilog():
+    from gummanager.libs import config_files
+
     config = getConfiguration()
     values = {}
     extract_values(config, values, ns=[])
     lines = '\n'.join([u'.. |{}| replace:: {}'.format(key, value) for key, value in values.items()])
+
+    config_files = {k: v for k, v in config_files.__dict__.items() if not k.startswith('__')}
+
+    config_files_values = {}
+    extract_values(config_files, config_files_values, ns=['files'])
+
+    lines += '\n'.join([u'.. |{}| replace:: {}'.format(key, value) for key, value in config_files_values.items()])
     return lines
 
 
