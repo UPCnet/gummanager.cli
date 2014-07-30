@@ -166,6 +166,7 @@ class MaxTarget(Target):
             {
                 'name': instance_name,
                 'server': self.config['server'],
+                'running': maxserver.get_running_version(instance_name),
             },
             maxserver.upgrade,
             instance_name,

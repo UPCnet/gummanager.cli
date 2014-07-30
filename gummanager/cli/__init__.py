@@ -22,14 +22,14 @@ Usage:
     gum oauth reload nginx [-c]
     gum oauth help <command>...
     gum max info [-c]
+    gum max help <command>...
     gum max add instance <instance-name> [--port-index=<port-index> --oauth-instance=<oauth-name>] [-c]
     gum max list instances [-c]
     gum max get available port [-c]
-    gum max [<instance-name>] status [-c]
+    gum max status [<instance-name>] [-c]
     gum max <instance-name> (start|stop) [-c]
     gum max <instance-name> upgrade [-c]
     gum max reload nginx [-c]
-    gum max help <command>...
     gum genweb info [-c]
     gum genweb list instances [-c]
     gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]

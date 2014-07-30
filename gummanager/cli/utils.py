@@ -238,7 +238,6 @@ class LogEcho(threading.Thread):
         self.process = None
         self.finished = False
         self.filters = filters
-        print self.logfile
 
     def stop(self):
         print
