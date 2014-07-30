@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import json
 import prettytable
@@ -117,7 +118,7 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):
     return option
 
 
-def getConfiguration(config_file_option):
+def getConfiguration(config_file_option=''):
     config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
     try:
         parsed_config = json.loads(open(config_file).read())
@@ -126,6 +127,26 @@ def getConfiguration(config_file_option):
         sys.exit(1)
     else:
         return ConfigWrapper.from_dict(parsed_config)
+
+
+def extract_values(item, values, ns):
+    if isinstance(item, dict):
+        for key, value in item.items():
+            extract_values(value, values, ns=ns + [key])
+
+    elif isinstance(item, list):
+        pass
+
+    else:
+        values['_'.join(ns)] = item
+
+
+def epilog():
+    config = getConfiguration()
+    values = {}
+    extract_values(config, values, ns=[])
+    lines = '\n'.join([u'.. |{}| replace:: {}'.format(key, value) for key, value in values.items()])
+    return lines
 
 
 def padded_success(string):
