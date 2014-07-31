@@ -10,6 +10,7 @@ import sys
 import threading
 
 from gummanager.libs.utils import RemoteConnection
+from gummanager.libs import ports as port_definitions
 from gummanager.cli.pacmanprogressbar import Pacman
 
 term = Terminal()
@@ -142,20 +143,16 @@ def extract_values(item, values, ns):
 
 
 def epilog():
-    from gummanager.libs import config_files
-
     config = getConfiguration()
+    ports = {name: port for name, port in port_definitions.__dict__.items() if not name.startswith('__')}
     values = {}
     extract_values(config, values, ns=[])
-    lines = '\n'.join([u'.. |{}| replace:: {}'.format(key, value) for key, value in values.items()])
+    extract_values(ports, values, ns=['ports'])
 
-    config_files = {k: v for k, v in config_files.__dict__.items() if not k.startswith('__')}
+    lines = '\n'.join([u'.. |{}| replace:: ``{}``'.format(key, value) for key, value in values.items()])
+    _lines = '\n'.join([u'.. |{}_c| replace:: {}'.format(key, value) for key, value in values.items()])
 
-    config_files_values = {}
-    extract_values(config_files, config_files_values, ns=['files'])
-
-    lines += '\n'.join([u'.. |{}| replace:: {}'.format(key, value) for key, value in config_files_values.items()])
-    return lines
+    return lines + '\n' + _lines
 
 
 def padded_success(string):

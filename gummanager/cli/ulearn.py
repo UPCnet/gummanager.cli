@@ -48,7 +48,7 @@ class ULearnTarget(GenwebTarget):
         oauthserver = OauthServer(oauth_config)
         oauth_instance = oauthserver.get_instance(oauth_instance_name)
 
-        if not max_instance:
+        if not oauth_instance:
             padded_error("Max server {} is bound to an oauth {} that doesn't exist".format(max_instance_name, oauth_instance_name))
             return None
 
