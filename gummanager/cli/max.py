@@ -91,6 +91,15 @@ class MaxTarget(Target):
 
     def reload_nginx(self, **kwargs):
         maxserver = self.Server
+
+        run_recipe_with_confirmation(
+            'Reload nginx httpd server ?',
+            {
+                'server': self.config['server'],
+            },
+            maxserver.reload_nginx_configuration,
+        )
+
         maxserver.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
