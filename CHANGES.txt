@@ -1,11 +1,53 @@
 Changelog
 =========
 
-1.2 (unreleased)
+1.2 (2014-07-31)
 ----------------
 
-- Nothing changed yet.
-
+* Add ports to the epilog [Carles Bruguera]
+* Add sphinx extension to read config files [Carles Bruguera]
+* Finish checks in utalk new instance [Carles Bruguera]
+* Include files in epilog [Carles Bruguera]
+* epilog generator on gum configuration for sphinx [Carles Bruguera]
+* Change command definition order [Carles Bruguera]
+* Add max upgrade command [Carles Bruguera]
+* Added utalk add instance command [Carles Bruguera]
+* Provide utalk config [Carles Bruguera]
+* Cleanup [Carles Bruguera]
+* Receive yielded messages both with lists or strings [Carles Bruguera]
+* Echo logger with selectable progressbar or raw logs [Carles Bruguera]
+* Make a line break before killing tail process [Carles Bruguera]
+* Add progress indicator based on remote log [Carles Bruguera]
+* Improve lib calls [Carles Bruguera]
+* Fix ldap branch users command [Carles Bruguera]
+* Remove intermediate src folder [Carles Bruguera]
+* Typo [Carles Bruguera]
+* Refactor to use self.Server with config wrapper [Carles Bruguera]
+* Add wrapper to get dict values as attrs [Carles Bruguera]
+* Add fallback to ask for missing config values [Carles Bruguera]
+* Config wrapper to ask missing config options [Carles Bruguera]
+* Add actions for utalk target [Carles Bruguera]
+* Add help for max add instance [Carles Bruguera]
+* Add help command to oauth target [Carles Bruguera]
+* Use user and password from config file [Carles Bruguera]
+* Add some cosmetic and helper features [Carles Bruguera]
+* Add target-level help, echoing method docstrings [Carles Bruguera]
+* Make info and help target defaults [Carles Bruguera]
+* Pretty-coloured print of target configuration [Carles Bruguera]
+* Mask password on input and display [Carles Bruguera]
+* ldap list branch users [Carles Bruguera]
+* ldap del branch user [Carles Bruguera]
+* Fix user check [Carles Bruguera]
+* Use new connect method [Carles Bruguera]
+* Move test utalk to new utalk target [Carles Bruguera]
+* Authenticate as ldap to create branch users [Carles Bruguera]
+* test max WIP [Carles Bruguera]
+* Collect needed information for test [Carles Bruguera]
+* Check user method [Carles Bruguera]
+* Add user in users ou [Carles Bruguera]
+* use ldap server [Carles Bruguera]
+* Finish ldap user command [Carles Bruguera]
+* Max text and ldap add user WIP [Carles Bruguera]
 
 1.1 (2014-05-15)
 ----------------
