@@ -25,8 +25,13 @@ def cfgfile_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         'circus_nginx_port': '{circus_nginx_port}',
         'circus_httpd_endpoint': '{circus_httpd_endpoint}',
         'port_index': '{port_index}',
-
-
+        'name': '{name}',
+        'hashtag': '',
+        'server': configuration.max.server_dns + '/{name}',
+        'oauth_server': configuration.max.default_oauth_server_dns + '/{name}',
+        'restricted_user': 'restricted',
+        'restricted_user_token': 'aTGrQepAAeVQr1udDGmc8f2Uxdch0RXS',
+        'language': 'ca'
     }
 
     filename, format = text.split(',')
