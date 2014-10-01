@@ -7,6 +7,7 @@ Usage:
     gum ldap add branch <branch-name>[-c]
     gum ldap get branch <branch-name> [-c]
     gum ldap list branches [-c]
+    gum ldap <branch-name> add users <users-file> [-c]
     gum ldap <branch-name> list users [--filter=<text>][-c]
     gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
     gum ldap <branch-name> delete user <ldap-username> [-c]

@@ -29,6 +29,12 @@ def json_pretty_print(data, mask_passwords=False):
 
 
 def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
+    stop_on_errors = kwargs.get('stop_on_errors', True)
+    try:
+        del kwargs['stop_on_errors']
+    except:
+        pass
+
     message = '\n    ' + term.green + title + '\n' + term.normal + json_pretty_print(params)
     if ask_confirmation(message):
         for yielded in recipe_method(*args, **kwargs):
@@ -37,7 +43,7 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
 
             for code, message in yielded:
                 print_message(code, message)
-                if code == 0:
+                if code == 0 and stop_on_errors:
                     return None
 
     print
@@ -159,8 +165,9 @@ def padded_success(string):
     print term.bold_green + '    {}'.format(string) + term.normal
 
 
-def padded_error(string):
-    print term.bold_red + '    {}\n'.format(string) + term.normal
+def padded_error(string, linebreak=True):
+    breakchar = '\n' if linebreak else ''
+    print term.bold_red + '    {}{}'.format(string, breakchar) + term.normal
 
 
 def padded_log(string, filters=[]):

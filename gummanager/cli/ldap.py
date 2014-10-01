@@ -4,6 +4,7 @@ from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import getOptionFrom
 from gummanager.cli.utils import get_length
 from gummanager.cli.utils import highlighter
+from gummanager.cli.utils import run_recipe_with_confirmation
 from gummanager.libs import LdapServer
 from gummanager.libs._ldap import LDAP_INVALID_CREDENTIALS
 from gummanager.libs._ldap import LDAP_USER_NOT_FOUND
@@ -27,6 +28,33 @@ class LdapTarget(Target):
 
         ld.add_branch(branch_name)
         ld.disconnect()
+
+    def add_users(self, **kwargs):
+        """
+            Batch add users from a file of users. File is expected to be:
+
+            CSV with columns: username, display name, password
+        """
+        branch_name = getOptionFrom(kwargs, 'branch-name')
+        usersfile = getOptionFrom(kwargs, '<users-file>')
+
+        ld = self.Server
+        # Configure a different server for batch if present
+        if 'batch_server' in self.config:
+            ld.set_server(server=self.config['batch_server'], port=self.config['port'])
+
+        run_recipe_with_confirmation(
+            'Batch create users from file',
+            {
+                'server': ld.ldap_uri,
+                'branch': branch_name,
+
+            },
+            ld.batch_add_users,
+            branch_name,
+            usersfile,
+            stop_on_errors=False
+        )
 
     def add_user(self, **kwargs):
         """
