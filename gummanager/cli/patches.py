@@ -45,7 +45,17 @@ class DocoptExit(SystemExit):
     usage = ''
 
     def __init__(self, message=''):
-        SystemExit.__init__(self, (message + '\n' + put_spacing(self.usage) + '\n'))
+        base = self.usage
+
+        arguments = sys.argv
+        if len(arguments) >= 2:
+            target = arguments[1]
+            filtered = re.findall('\s*gum\s+{}.*'.format(target), base)
+            base = ''.join(filtered) if filtered else base
+
+        spaced = put_spacing(base)
+        striped_config = re.sub(r'\[-c\]', '', spaced)
+        SystemExit.__init__(self, (message + '\n' + striped_config + '\n'))
 
 docopt.extras = extras
 docopt.DocoptExit = DocoptExit
