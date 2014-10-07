@@ -43,7 +43,7 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
 
             for code, message in yielded:
                 print_message(code, message)
-                if code == 0 and stop_on_errors:
+                if (code == 0 and stop_on_errors) or code == 4:
                     return None
 
     print
@@ -187,7 +187,7 @@ def step_log(string):
 
 
 def print_message(code, message):
-    if code == 0:
+    if code in [0, 4]:
         padded_error(message)
     elif code == 1:
         padded_success(message)

@@ -40,6 +40,7 @@ Usage:
     gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-c -f]
     gum ulearn get available mountpoint [-c]
     gum ulearn reload nginx [-c]
+    gum ulearn <instance-name> add users <users-file> [--env=<server> --mpoint=<mpoint-name>] [-c]
     gum utalk info [-c]
     gum utalk add instance <domain> [--hashtag=<hashtag> --language=<lang>]
     gum utalk test <domain> [-c]

@@ -18,9 +18,57 @@ class ULearnTarget(GenwebTarget):
     """
     """
     server_klass = ULearnServer
+    subtargets = GenwebTarget.subtargets + ['users']
 
     def reload_nginx(self, **kwargs):
         self.Server.reload_nginx_configuration()
+
+    def add_users(self, **kwargs):
+        """
+            Add users from a file to a ulearn instance. User will be added to the
+            related ldap branch and max instance.
+        """
+        step_log('Checking instance')
+        padded_log('Loading existing instances')
+        instances = self.Server.get_instances()
+
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        environment = getOptionFrom(kwargs, 'env', default='')
+        mountpoint = getOptionFrom(kwargs, 'mpoint', default='')
+        usersfile = getOptionFrom(kwargs, 'users-file')
+
+        # Get all instances matching instance name
+        matched_instances = [instance for instance in instances if instance['plonesite'].replace('bqdc', 'mediolanum') == instance_name]
+
+        # Try to filter by env and mountpoint if provided
+        if environment:
+            matched_instances = [instance for instance in matched_instances if instance['environment'] == environment]
+
+        if mountpoint:
+            matched_instances = [instance for instance in matched_instances if instance['mountpoint'] == mountpoint]
+
+        if not matched_instances:
+            padded_error("No instance named {}".format(instance_name))
+        elif len(matched_instances) > 1:
+            padded_error("More than 1 instance named {}".format(instance_name))
+            padded_log("Try again specifying one or both of --mpoint and --env options")
+
+        instance = matched_instances[0]
+
+        run_recipe_with_confirmation(
+            'Batch create users from file',
+            {
+                'server': instance['environment'],
+                'mountpoint': instance['mountpoint'],
+                'plonesite': instance['plonesite'],
+                'url': instance['url']
+
+            },
+            self.Server.batch_add_users,
+            instance,
+            usersfile,
+            stop_on_errors=False
+        )
 
     def add_instance(self, **kwargs):
 
