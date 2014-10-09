@@ -19,6 +19,7 @@ class ULearnTarget(GenwebTarget):
     """
     server_klass = ULearnServer
     subtargets = GenwebTarget.subtargets + ['users']
+    _actions = GenwebTarget._actions + ['subscribe']
 
     def reload_nginx(self, **kwargs):
         self.Server.reload_nginx_configuration()
@@ -67,6 +68,53 @@ class ULearnTarget(GenwebTarget):
             self.Server.batch_add_users,
             instance,
             usersfile,
+            stop_on_errors=False
+        )
+
+    def subscribe_users(self, **kwargs):
+        """
+            Subscribe users to a bunch of ulearn instance communities.
+            User will be subscribed in the accorded roles
+        """
+        step_log('Checking instance')
+        padded_log('Loading existing instances')
+        instances = self.Server.get_instances()
+
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        environment = getOptionFrom(kwargs, 'env', default='')
+        mountpoint = getOptionFrom(kwargs, 'mpoint', default='')
+        subscriptionsfile = getOptionFrom(kwargs, 'subscriptions-file')
+
+        # Get all instances matching instance name
+        matched_instances = [instance for instance in instances if instance['plonesite'].replace('bqdc', 'mediolanum') == instance_name]
+
+        # Try to filter by env and mountpoint if provided
+        if environment:
+            matched_instances = [instance for instance in matched_instances if instance['environment'] == environment]
+
+        if mountpoint:
+            matched_instances = [instance for instance in matched_instances if instance['mountpoint'] == mountpoint]
+
+        if not matched_instances:
+            padded_error("No instance named {}".format(instance_name))
+        elif len(matched_instances) > 1:
+            padded_error("More than 1 instance named {}".format(instance_name))
+            padded_log("Try again specifying one or both of --mpoint and --env options")
+
+        instance = matched_instances[0]
+
+        run_recipe_with_confirmation(
+            'Batch subscribe users to communities',
+            {
+                'server': instance['environment'],
+                'mountpoint': instance['mountpoint'],
+                'plonesite': instance['plonesite'],
+                'url': instance['url']
+
+            },
+            self.Server.batch_subscribe_users,
+            instance,
+            subscriptionsfile,
             stop_on_errors=False
         )
 

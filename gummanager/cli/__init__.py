@@ -41,6 +41,7 @@ Usage:
     gum ulearn get available mountpoint [-c]
     gum ulearn reload nginx [-c]
     gum ulearn <instance-name> add users <users-file> [--env=<server> --mpoint=<mpoint-name>] [-c]
+    gum ulearn <instance-name> subscribe users <subscriptions-file> [--env=<server> --mpoint=<mpoint-name>] [-c]
     gum utalk info [-c]
     gum utalk add instance <domain> [--hashtag=<hashtag> --language=<lang>]
     gum utalk test <domain> [-c]
