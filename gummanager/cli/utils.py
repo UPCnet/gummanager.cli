@@ -129,7 +129,12 @@ def getConfiguration(config_file_option=''):
     config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
     try:
         parsed_config = json.loads(open(config_file).read())
-    except:
+    except IOError:
+        padded_error(
+            "\nError loading {}, make sure the file exists, please."
+            "\nIf you don't have one, ask for it!".format(config_file))
+        sys.exit(1)
+    except ValueError:
         padded_error('\nError loading {}, check json syntax'.format(config_file))
         sys.exit(1)
     else:
