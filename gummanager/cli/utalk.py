@@ -63,12 +63,11 @@ class UTalkTarget(Target):
         maxserver = MaxServer(max_config)
 
         oauth_config = getConfiguration(kwargs['--config'])['oauth']
-        oauthserver = OauthServer(**oauth_config)
+        oauthserver = OauthServer(oauth_config)
 
-        configuration = dict(self.config)
-        configuration.update(dict(
-            maxserver=maxserver,
-            oauthserver=oauthserver
-        ))
+        self.extra_config = {
+            'max': maxserver,
+            'oauth': oauthserver
+        }
 
         self.Server.test(instance_name)
