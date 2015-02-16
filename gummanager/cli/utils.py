@@ -8,6 +8,7 @@ from getpass import getpass
 import re
 import sys
 import threading
+import os
 
 from gummanager.libs.utils import RemoteConnection
 from gummanager.libs import ports as port_definitions
@@ -126,7 +127,23 @@ def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):
 
 
 def getConfiguration(config_file_option=''):
-    config_file = config_file_option if config_file_option else '{}/.gum.conf'.format(os.path.expanduser('~'))
+    """
+        Returns a wrapped .gum.conf config file.
+
+        The actual filename will be choosen following this resolution order.
+        If the file doesn't exists, will try to load the next.
+
+        1.- Filename specified in config_file_option
+        2.- .gum.conf on current working directory
+        3.- .gum.conf on logged user's home folder
+    """
+    if config_file_option and os.path.exists(config_file_option):
+        config_file = config_file_option
+    elif os.path.exists('{}/.gum.conf'.format(os.getcwd())):
+        config_file = '{}/.gum.conf'.format(os.getcwd())
+    else:
+        config_file = '{}/.gum.conf'.format(os.path.expanduser('~'))
+
     try:
         parsed_config = json.loads(open(config_file).read())
     except IOError:
