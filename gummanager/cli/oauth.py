@@ -58,7 +58,7 @@ class OauthTarget(Target):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         oauth = self.Server
         status = oauth.get_status(instance_name)
-        if status['status'] == 'active':
+        if status['status'] == 'running':
             print '\nAlready running\n'
         if status['status'] in ['stopped', 'unknown']:
             oauth.start(instance_name)
@@ -69,7 +69,7 @@ class OauthTarget(Target):
         status = oauth.get_status(instance_name)
         if status['status'] == 'stopped':
             print '\nAlready stopped\n'
-        if status['status'] == 'active':
+        if status['status'] == 'running':
             oauth.stop(instance_name)
 
     def reload_nginx(self, **kwargs):
@@ -105,8 +105,9 @@ class OauthTarget(Target):
             formatters={
                 'name': highlighter(default='bold_yellow'),
                 'status': highlighter(values={
-                    'active': 'green',
+                    'running': 'green',
                     'unknown': 'red',
+                    'not found': 'cyan',
                     'stopped': 'red'}
                 )
             },

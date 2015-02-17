@@ -1,4 +1,5 @@
 from gummanager.cli.target import Target
+from gummanager.cli.utils import padded_success
 from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom
@@ -75,9 +76,9 @@ class MaxTarget(Target):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = self.Server
         status = maxserver.get_status(instance_name)
-        if status['status']['max'] == 'active':
-            print '\nAlready running\n'
-        if status['status']['max'] in ['stopped', 'unknown']:
+        if status['status'] == 'running':
+            padded_success("Already running")
+        if status['status'] in ['stopped', 'unknown', 'not found']:
             maxserver.start(instance_name)
 
     def stop(self, **kwargs):
@@ -85,8 +86,8 @@ class MaxTarget(Target):
         maxserver = self.Server
         status = maxserver.get_status(instance_name)
         if status['status'] == 'stopped':
-            print '\nAlready stopped\n'
-        if status['status'] == 'active':
+            padded_success("Already stopped")
+        if status['status'] == 'running':
             maxserver.stop(instance_name)
 
     def reload_nginx(self, **kwargs):
@@ -126,9 +127,11 @@ class MaxTarget(Target):
             formatters={
                 'name': highlighter(default='bold_yellow'),
                 'status': highlighter(values={
-                    'active': 'green',
+                    'running': 'green',
                     'unknown': 'red',
+                    'not found': 'cyan',
                     'stopped': 'red'}
+
                 )
             },
             titles={
