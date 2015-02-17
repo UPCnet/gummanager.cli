@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import yaml
 import json
 import prettytable
 from blessings import Terminal
@@ -145,7 +146,7 @@ def getConfiguration(config_file_option=''):
         config_file = '{}/.gum.conf'.format(os.path.expanduser('~'))
 
     try:
-        parsed_config = json.loads(open(config_file).read())
+        parsed_config = yaml.load(open(config_file).read())
     except IOError:
         padded_error(
             "\nError loading {}, make sure the file exists, please."

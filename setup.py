@@ -36,6 +36,7 @@ setup(name='gummanager.cli',
           'docopt',
           'blessings',
           'prettytable',
+          'PyYAML',
           'gummanager.libs'
           # -*- Extra requirements: -*-
       ],
