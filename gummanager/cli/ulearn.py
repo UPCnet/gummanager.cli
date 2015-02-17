@@ -181,9 +181,9 @@ class ULearnTarget(GenwebTarget):
             logecho = LogEcho(
                 env_params.ssh_user,
                 env_params.server,
-                '{}/zc1.log'.format(env_params.log_folder),
-                target_lines=326,
-                filters=['INFO']
+                '{}/{}.log'.format(env_params.log_folder, env_params.instance_name),
+                target_lines=359,
+                filters=['INFO GenericSetup']
             )
 
             run_recipe_with_confirmation(
