@@ -78,17 +78,18 @@ class MaxTarget(Target):
         status = maxserver.get_status(instance_name)
         if status['status'] == 'running':
             padded_success("Already running")
-        if status['status'] in ['stopped', 'unknown', 'not found']:
+        else:
             maxserver.start(instance_name)
 
     def stop(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = self.Server
         status = maxserver.get_status(instance_name)
-        if status['status'] == 'stopped':
-            padded_success("Already stopped")
+
         if status['status'] == 'running':
             maxserver.stop(instance_name)
+        else:
+            padded_success("Already stopped")
 
     def reload_nginx(self, **kwargs):
         maxserver = self.Server
@@ -129,6 +130,9 @@ class MaxTarget(Target):
                 'status': highlighter(values={
                     'running': 'green',
                     'unknown': 'red',
+                    'down': 'red',
+                    'backoff': 'red',
+                    'fatal': 'red',
                     'not found': 'cyan',
                     'stopped': 'red'}
 

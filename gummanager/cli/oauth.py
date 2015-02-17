@@ -107,6 +107,7 @@ class OauthTarget(Target):
                 'status': highlighter(values={
                     'running': 'green',
                     'unknown': 'red',
+                    'down': 'red',
                     'not found': 'cyan',
                     'stopped': 'red'}
                 )

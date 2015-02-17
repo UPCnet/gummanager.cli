@@ -51,7 +51,6 @@ class UTalkTarget(Target):
         self.Server.add_instance(
             name=instance_name,
             server=max_instance['server']['dns'],
-            oauth_server=max_instance['oauth'],
             hashtag=hashtag,
             restricted_user='restricted',
             language=language)
