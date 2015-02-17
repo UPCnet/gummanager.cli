@@ -2,7 +2,7 @@ from gummanager.cli.target import Target
 from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import ask_confirmation
 from gummanager.cli.utils import getConfiguration
-from gummanager.cli.utils import getOptionFrom
+from gummanager.cli.utils import getOptionFrom, padded_success
 from gummanager.cli.utils import highlighter, run_recipe_with_confirmation, LogEcho
 from gummanager.libs import OauthServer
 
@@ -59,18 +59,20 @@ class OauthTarget(Target):
         oauth = self.Server
         status = oauth.get_status(instance_name)
         if status['status'] == 'running':
-            print '\nAlready running\n'
-        if status['status'] in ['stopped', 'unknown']:
+            padded_success('Already running')
+        else:
             oauth.start(instance_name)
 
     def stop(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name')
         oauth = self.Server
         status = oauth.get_status(instance_name)
-        if status['status'] == 'stopped':
-            print '\nAlready stopped\n'
         if status['status'] == 'running':
             oauth.stop(instance_name)
+        else:
+            padded_success("Already stopped")
+        if status['status'] == 'stopped':
+            print '\nAlready stopped\n'
 
     def reload_nginx(self, **kwargs):
         oauth = self.Server

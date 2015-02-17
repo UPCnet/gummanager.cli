@@ -262,7 +262,7 @@ class GUMTable(prettytable.PrettyTable):
             column_name = self.titles.get(column_id, column_id)
             return self.get_string(sortby=self.table_header_style(column_name))
         else:
-            return term.yellow("\nSorry, There's nothing to see here...\n")
+            return term.yellow("\nSorry, we don't have any data to show to you right now...\n")
 
 
 def default_formatter(value):

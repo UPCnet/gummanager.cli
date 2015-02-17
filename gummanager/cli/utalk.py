@@ -4,12 +4,22 @@ from gummanager.cli.utils import getOptionFrom, step_log, padded_log, padded_err
 from gummanager.libs import MaxServer
 from gummanager.libs import OauthServer
 from gummanager.libs import UTalkServer
+from gummanager.cli.utils import json_pretty_print, run_recipe_with_confirmation
 
 
 class UTalkTarget(Target):
     server_klass = UTalkServer
     _actions = ['test', 'add']
     subtargets = ['instance']
+
+    def info(self, **kwargs):
+        shared_config = {
+            'rabbitmq': getConfiguration(kwargs['--config'])['rabbitmq'],
+            'maxbunny': getConfiguration(kwargs['--config'])['maxbunny']
+        }
+        print
+        print json_pretty_print(shared_config, mask_passwords=True)
+        print
 
     def add_instance(self, **kwargs):
         """
@@ -45,12 +55,24 @@ class UTalkTarget(Target):
 
         self.extra_config = {
             'max': maxserver,
-            'oauth': oauthserver
+            'oauth': oauthserver,
+            'rabbitmq': getConfiguration(kwargs['--config'])['rabbitmq'],
+            'maxbunny': getConfiguration(kwargs['--config'])['maxbunny']
+
         }
 
-        self.Server.add_instance(
+        run_recipe_with_confirmation(
+            'Adding a new utalk domain',
+            {
+                'server': max_instance['server']['dns'],
+                'name': instance_name,
+                'hashtag': hashtag,
+                'language': language,
+            },
+            self.Server.add_instance,
             name=instance_name,
             server=max_instance['server']['dns'],
+            oauth_server=oauth_instance['server']['dns'],
             hashtag=hashtag,
             restricted_user='restricted',
             language=language)
