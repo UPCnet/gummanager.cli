@@ -3,7 +3,7 @@ from gummanager.cli.utils import GUMTable
 from gummanager.cli.utils import ask_confirmation
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom, padded_success
-from gummanager.cli.utils import highlighter, run_recipe_with_confirmation, LogEcho
+from gummanager.cli.utils import highlighter, run_recipe_with_confirmation, LogEcho, run_recipe_without_confirmation
 from gummanager.libs import OauthServer
 
 
@@ -75,8 +75,17 @@ class OauthTarget(Target):
             print '\nAlready stopped\n'
 
     def reload_nginx(self, **kwargs):
-        oauth = self.Server
-        oauth.reload_nginx_configuration()
+        maxserver = self.Server
+
+        run_recipe_with_confirmation(
+            'Reload nginx httpd server ?',
+            {
+                'server': self.config['server'],
+            },
+            maxserver.reload_nginx_configuration,
+        )
+
+        maxserver.reload_nginx_configuration()
 
     def get_available_port(self, **kwargs):
         oauth = self.Server
@@ -85,8 +94,14 @@ class OauthTarget(Target):
 
     def test(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
+        username = getOptionFrom(kwargs, 'username')
+        password = getOptionFrom(kwargs, 'password')
         oauth = self.Server
-        oauth.test(instance_name)
+
+        run_recipe_without_confirmation(
+            oauth.test,
+            instance_name, username, password
+        )
 
     def status(self, **kwargs):
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')

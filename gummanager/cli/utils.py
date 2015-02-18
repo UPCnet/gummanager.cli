@@ -30,12 +30,23 @@ def json_pretty_print(data, mask_passwords=False):
     return config
 
 
+def run_recipe_without_confirmation(recipe_method, *args, **kwargs):
+    stop_on_errors = kwargs.get('stop_on_errors', True)
+    kwargs.pop('stop_on_errors', None)
+
+    for yielded in recipe_method(*args, **kwargs):
+        if not isinstance(yielded, list):
+            yielded = [yielded, ]
+
+        for code, message in yielded:
+            print_message(code, message)
+            if (code == 0 and stop_on_errors) or code == 4:
+                sys.exit(1)
+
+
 def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
     stop_on_errors = kwargs.get('stop_on_errors', True)
-    try:
-        del kwargs['stop_on_errors']
-    except:
-        pass
+    kwargs.pop('stop_on_errors', None)
 
     message = '\n    ' + term.green + title + '\n' + term.normal + json_pretty_print(params)
     if ask_confirmation(message):
@@ -46,7 +57,7 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
             for code, message in yielded:
                 print_message(code, message)
                 if (code == 0 and stop_on_errors) or code == 4:
-                    return None
+                    sys.exit(1)
 
     print
     return True
