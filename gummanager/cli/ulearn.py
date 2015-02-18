@@ -155,10 +155,9 @@ class ULearnTarget(GenwebTarget):
 
         allow_shared_mountpoint = getOptionFrom(kwargs, 'f', False)
         create = False
-
         padded_log('Checking mountpoint ...')
         if environment and mountpoint:
-            if ulearn_server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
+            if not ulearn_server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
                 padded_error("This mountpoint is unavailable")
                 return
             create = True
