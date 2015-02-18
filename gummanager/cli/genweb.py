@@ -42,13 +42,16 @@ class GenwebTarget(Target):
         allow_shared_mountpoint = getOptionFrom(kwargs, 'f', False)
         create = False
 
+        self.extra_config = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
+        genweb_server = self.Server
+
         if environment and mountpoint:
-            if not self.Server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
+            if not genweb_server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
                 print "This mountpoint is unavailable"
                 return
             create = True
         else:
-            available_mountpoint = self.Server.get_available_mountpoint()
+            available_mountpoint = genweb_server.get_available_mountpoint()
             if available_mountpoint:
                 environment = available_mountpoint['environment']
                 mountpoint = available_mountpoint['id']
@@ -65,7 +68,7 @@ class GenwebTarget(Target):
             title = siteid.capitalize()
             language = 'ca'
 
-            env_params = self.Server.get_environment(environment)
+            env_params = genweb_server.get_environment(environment)
             logecho = LogEcho(
                 env_params.ssh_user,
                 env_params.server,
@@ -82,6 +85,6 @@ class GenwebTarget(Target):
                     "mountpoint": mountpoint,
                     "ldap_branch": ldap_branch,
                 },
-                self.Server.new_instance,
+                genweb_server.new_instance,
                 *[instance_name, environment, mountpoint, title, language, ldap_branch, ldap_password, logecho]
             )

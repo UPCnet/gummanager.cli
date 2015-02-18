@@ -132,6 +132,9 @@ class ULearnTarget(GenwebTarget):
         maxserver = MaxServer(max_config)
         max_instance = maxserver.get_instance(max_instance_name)
 
+        self.extra_config = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
+        ulearn_server = self.Server
+
         if not max_instance:
             padded_error("There's no defined max server named {}".format(max_instance_name))
             return None
@@ -155,12 +158,12 @@ class ULearnTarget(GenwebTarget):
 
         padded_log('Checking mountpoint ...')
         if environment and mountpoint:
-            if not self.Server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
+            if ulearn_server.is_mountpoint_available(environment, mountpoint, allow_shared=allow_shared_mountpoint):
                 padded_error("This mountpoint is unavailable")
                 return
             create = True
         else:
-            available_mountpoint = self.Server.get_available_mountpoint()
+            available_mountpoint = ulearn_server.get_available_mountpoint()
             if available_mountpoint:
                 environment = available_mountpoint['environment']
                 mountpoint = available_mountpoint['id']
@@ -177,7 +180,7 @@ class ULearnTarget(GenwebTarget):
             title = siteid.capitalize()
             language = 'ca'
 
-            env_params = self.Server.get_environment(environment)
+            env_params = ulearn_server.get_environment(environment)
             logecho = LogEcho(
                 env_params.ssh_user,
                 env_params.server,
@@ -196,6 +199,6 @@ class ULearnTarget(GenwebTarget):
                     "ldap_branch": ldap_branch,
                     "max": max_instance['server']['dns']
                 },
-                self.Server.new_instance,
+                ulearn_server.new_instance,
                 *[instance_name, environment, mountpoint, title, language, max_instance_name, max_instance['server']['direct'], oauth_instance_name, ldap_branch, ldap_password, logecho]
             )

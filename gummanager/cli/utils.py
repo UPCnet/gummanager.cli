@@ -298,7 +298,10 @@ class LogEcho(threading.Thread):
 
     def stop(self):
         print
-        self.process.kill()
+        try:
+            self.process.kill()
+        except:
+            print padded_log('An error occurred when stopping logger')
 
     def run(self):
         def tail_log(line, stdin, process):
