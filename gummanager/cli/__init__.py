@@ -66,6 +66,9 @@ import patches
 import pkg_resources
 import sys
 
+import warnings
+warnings.filterwarnings('ignore')
+
 patches = patches
 
 TARGETS = {
