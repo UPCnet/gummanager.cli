@@ -24,10 +24,6 @@ class MaxTarget(Target):
             based on the existing instances, and assume <oauth-name> named as the <instance-name>.
             If you want to use a specific port index or oauth instance please specify it.
         """
-        self.extra_config = {
-            'rabbitmq': getConfiguration(kwargs['--config'])['rabbitmq'],
-            'maxbunny': getConfiguration(kwargs['--config'])['maxbunny']
-        }
         maxserver = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')
@@ -60,60 +56,40 @@ class MaxTarget(Target):
             oauth_instance=oauth_instance,
         )
 
-    def test(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
+    def list_instances(self, **kwargs):
+        """
+            Lists all existing max instances.
 
+            This list will include instances that are not actually running and instances
+            that are not even loaded on supervisor, for example old instances that are
+            pending to delete.
+        """
         maxserver = self.Server
-        instance_info = maxserver.get_instance(instance_name)
-
-        oauth_config = getConfiguration(kwargs['--config'])['oauth']
-        oauthserver = OauthServer(**oauth_config)
-        oauth_info = oauthserver.instance_by_dns(instance_info['oauth'])
-        ldap_branch = oauth_info['ldap']['branch']
-        ldap_branch = oauth_info['ldap']['branch']
-
-        maxserver.test(instance_name, ldap_branch)
-
-        print 'Test end'
-
-    def start(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
-        maxserver = self.Server
-        status = maxserver.get_status(instance_name)
-        if status['status'] == 'running':
-            padded_success("Already running")
-        else:
-            maxserver.start(instance_name)
-
-    def stop(self, **kwargs):
-        instance_name = getOptionFrom(kwargs, 'instance-name')
-        maxserver = self.Server
-        status = maxserver.get_status(instance_name)
-
-        if status['status'] == 'running':
-            maxserver.stop(instance_name)
-        else:
-            padded_success("Already stopped")
-
-    def reload_nginx(self, **kwargs):
-        maxserver = self.Server
-
-        run_recipe_with_confirmation(
-            'Reload nginx httpd server ?',
-            {
-                'server': self.config['server'],
+        instances = maxserver.get_instances()
+        table = GUMTable()
+        table.from_dict_list(
+            instances,
+            hide=["circus_tcp", "mongo_database"],
+            formatters={
+                'name': highlighter(default='bold_yellow'),
             },
-            maxserver.reload_nginx_configuration,
-        )
-
-        maxserver.reload_nginx_configuration()
-
-    def get_available_port(self, **kwargs):
-        maxserver = self.Server
-        port = maxserver.get_available_port()
-        print port
+            titles={
+                'name': 'Name',
+                'port_index': 'Index',
+                'server': 'Server access',
+                'ldap': 'Ldap configuration',
+                'circus': ' Circus'
+            })
+        print table.sorted('port_index')
 
     def status(self, **kwargs):
+        """
+            Lists status for one or all active max instances.
+
+            The status listed here is the status reported by supervisor. There's
+            a special status 'not found'. Instances on this state are  that are created,
+            but already not loaded into supervisor.
+        """
         instance_name = getOptionFrom(kwargs, 'instance-name', default='all')
 
         oauth = self.Server
@@ -151,26 +127,65 @@ class MaxTarget(Target):
             })
         print table.sorted('name')
 
-    def list_instances(self, **kwargs):
+    def start(self, **kwargs):
+        """
+            Starts a max instance.
+
+            If the instance is not loaded on supervisor, it will be loaded and started.
+            In every other case the instance will be started from the prior status.
+            Supervisord process must be running in order to use this command
+        """
+        instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = self.Server
-        instances = maxserver.get_instances()
-        table = GUMTable()
-        table.from_dict_list(
-            instances,
-            hide=["circus_tcp", "mongo_database"],
-            formatters={
-                'name': highlighter(default='bold_yellow'),
-            },
-            titles={
-                'name': 'Name',
-                'port_index': 'Index',
-                'server': 'Server access',
-                'ldap': 'Ldap configuration',
-                'circus': ' Circus'
-            })
-        print table.sorted('port_index')
+        status = maxserver.get_status(instance_name)
+        if status['status'] == 'running':
+            padded_success("Already running")
+        else:
+            maxserver.start(instance_name)
+
+    def stop(self, **kwargs):
+        """
+            Stops a max instance.
+
+            Supervisord process must be running in order to use this command
+        """
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        maxserver = self.Server
+        status = maxserver.get_status(instance_name)
+
+        if status['status'] == 'running':
+            maxserver.stop(instance_name)
+        else:
+            padded_success("Already stopped")
+
+    def test(self, **kwargs):
+        """
+            Tests that a max instance is working as expected.
+
+            An username and a password of an existing user has to be provided.
+        """
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+
+        maxserver = self.Server
+        instance_info = maxserver.get_instance(instance_name)
+
+        oauth_config = getConfiguration(kwargs['--config'])['oauth']
+        oauthserver = OauthServer(**oauth_config)
+        oauth_info = oauthserver.instance_by_dns(instance_info['oauth'])
+        ldap_branch = oauth_info['ldap']['branch']
+        ldap_branch = oauth_info['ldap']['branch']
+
+        maxserver.test(instance_name, ldap_branch)
+
+        print 'Test end'
 
     def upgrade(self, **kwargs):
+        """
+            Upgrades a max server.
+
+            The versions used in the upgrade will be the ones defined in the versions.cfg
+            of the buildout used in the instance.
+        """
         instance_name = getOptionFrom(kwargs, 'instance-name')
         maxserver = self.Server
 
@@ -192,3 +207,34 @@ class MaxTarget(Target):
             instance_name,
             logecho=logecho,
         )
+
+    def reload_nginx(self, **kwargs):
+        """
+            Reloads the nginx server running the max instances.
+
+            Configuration test will be performed prior to restarting. If any
+            errors found, nginx won't be restarted.
+        """
+        maxserver = self.Server
+
+        run_recipe_with_confirmation(
+            'Reload nginx httpd server ?',
+            {
+                'server': self.config['server'],
+            },
+            maxserver.reload_nginx_configuration,
+        )
+
+        maxserver.reload_nginx_configuration()
+
+    def get_available_port(self, **kwargs):
+        """
+            Returns the first available port index for a max server.
+
+            The port returned will not take into account any gaps  in the port
+            assignation, so the number will be the next port after the highest used port.
+
+        """
+        maxserver = self.Server
+        port = maxserver.get_available_port()
+        print port
