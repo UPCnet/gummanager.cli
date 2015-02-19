@@ -42,6 +42,8 @@ def run_recipe_without_confirmation(recipe_method, *args, **kwargs):
             print_message(code, message)
             if (code == 0 and stop_on_errors) or code == 4:
                 sys.exit(1)
+            if code == 5:
+                return message
 
 
 def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
@@ -58,7 +60,8 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
                 print_message(code, message)
                 if (code == 0 and stop_on_errors) or code == 4:
                     sys.exit(1)
-
+                if code == 5:
+                    return message
     print
     return True
 
@@ -104,7 +107,7 @@ def ask_confirmation(message):
 
 def askOption(option_name, mask=False):
     input_getter = getpass if mask else raw_input
-    return input_getter('Enter value for required "{}" option: '.format(option_name))
+    return input_getter(' > Enter value for required "{}" option: '.format(option_name))
 
 
 def getOptionFrom(options, option_name, default=DEFAULT_VALUE, mask=False):

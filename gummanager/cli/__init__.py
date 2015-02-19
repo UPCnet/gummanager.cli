@@ -5,11 +5,10 @@ Usage:
     gum (-vh)
     gum ldap info
     gum ldap add branch <branch-name>
-    gum ldap get branch <branch-name>
     gum ldap list branches
+    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>]
     gum ldap <branch-name> add users <users-file>
     gum ldap <branch-name> list users [--filter=<text>]
-    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>]
     gum ldap <branch-name> delete user <ldap-username>
     gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>]
     gum ldap help <command>...
@@ -73,11 +72,11 @@ from gummanager.cli.utils import getConfiguration, getOptionFrom
 
 import patches
 import pkg_resources
-import sys
 import re
+import sys
 import warnings
-warnings.filterwarnings('ignore')
 
+warnings.filterwarnings('ignore')
 patches = patches
 
 TARGETS = {
@@ -102,7 +101,7 @@ def main():
     arguments = docopt.docopt(doc_with_config_options, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
 
     help_mode = False
-    if arguments['help']:
+    if sys.argv[2] == 'help':
         help_mode = True
         arguments['help'] = False
         for cmd in getOptionFrom(arguments, 'command'):
@@ -125,10 +124,8 @@ def main():
         sys.exit('Not Implemented: {}'.format(action_method_name))
 
     if help_mode:
-        command_line = ' '.join([a for a in ['gum'] + sys.argv[1:] if a != 'help'])
+        command_line = ' .*?'.join([a for a in ['gum'] + sys.argv[1:] if a != 'help'])
         command_definition = re.search(r'\n\s*({}.*?)\n'.format(command_line), __doc__).groups()[0]
         target.help(action_method_name, definition=command_definition)
     else:
         target_method(**arguments)
-
-
