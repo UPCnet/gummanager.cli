@@ -10,6 +10,7 @@ from gummanager.libs import OauthServer
 
 
 class MaxTarget(Target):
+    name = 'max'
     server_klass = MaxServer
     _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'configure', 'test', 'upgrade']
     subtargets = ['instance', 'instances', 'available', 'nginx']

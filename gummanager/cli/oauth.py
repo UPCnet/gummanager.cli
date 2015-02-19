@@ -8,6 +8,7 @@ from gummanager.libs import OauthServer
 
 
 class OauthTarget(Target):
+    name = 'oauth'
     server_klass = OauthServer
     _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'test']
     subtargets = ['instance', 'instances', 'available', 'nginx']

@@ -12,6 +12,7 @@ term = Terminal()
 
 
 class LdapTarget(Target):
+    name = 'ldap'
     server_klass = LdapServer
     _actions = ['add', 'list', 'delete', 'check', 'get']
     subtargets = ['branch', 'branches', 'user', 'users']

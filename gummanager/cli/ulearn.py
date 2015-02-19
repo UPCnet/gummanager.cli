@@ -17,6 +17,7 @@ import re
 class ULearnTarget(GenwebTarget):
     """
     """
+    name = 'ulearn'
     server_klass = ULearnServer
     subtargets = GenwebTarget.subtargets + ['users']
     _actions = GenwebTarget._actions + ['subscribe']

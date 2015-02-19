@@ -60,38 +60,37 @@ Options:
   -c --config         Use this file for default settings.
 """
 
-import docopt
-from gummanager.cli.ldap import LdapTarget
-from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.max import MaxTarget
 from gummanager.cli.genweb import GenwebTarget
+from gummanager.cli.ldap import LdapTarget
+from gummanager.cli.oauth import OauthTarget
 from gummanager.cli.ulearn import ULearnTarget
 from gummanager.cli.utalk import UTalkTarget
+from gummanager.cli.utils import getConfiguration
+from gummanager.cli.utils import getOptionFrom
 
-from gummanager.cli.utils import getConfiguration, getOptionFrom
-
+import docopt
 import patches
 import pkg_resources
 import re
 import sys
 import warnings
 
+
 warnings.filterwarnings('ignore')
 patches = patches
 
-TARGETS = {
-    'ldap': LdapTarget,
-    'oauth': OauthTarget,
-    'max': MaxTarget,
-    'genweb': GenwebTarget,
-    'ulearn': ULearnTarget,
-    'utalk': UTalkTarget,
+TARGET_CLASSES = [
+    LdapTarget,
+    OauthTarget,
+    MaxTarget,
+    GenwebTarget,
+    ULearnTarget,
+    UTalkTarget,
+]
 
-}
-
-SUBTARGETS = {
-
-}
+TARGETS = {klass.name: klass for klass in TARGET_CLASSES}
+SUBTARGETS = {}
 
 
 def main():
@@ -115,8 +114,7 @@ def main():
     target_name = targets[0]
 
     config = getConfiguration(arguments['--config'])
-    target_config = config.get(target_name, {})
-    target = TARGETS[target_name](target_config)
+    target = TARGETS[target_name](config)
     action_method_name = target.forge_command_from_arguments(arguments)
 
     target_method = getattr(target, action_method_name, None)

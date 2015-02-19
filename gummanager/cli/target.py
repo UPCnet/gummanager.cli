@@ -8,7 +8,7 @@ term = Terminal()
 
 
 class Target(object):
-
+    name = ''
     _actions = []
     subtargets = []
     extratargets = []
@@ -16,14 +16,11 @@ class Target(object):
 
     @property
     def Server(self):
-        config = {}
-        config.update(self.extra_config)
-        config.update(self.config)
-        return self.server_klass(ConfigWrapper.from_dict(config))
+        return self.server_klass(ConfigWrapper.from_dict(self.config))
 
     def __init__(self, config):
-        self.extra_config = {}
         self.config = config
+        self.config.update(self.config.get(self.name, {}))
 
     @property
     def actions(self):
@@ -63,3 +60,4 @@ class Target(object):
             action_method_name += "_{}".format(extratarget_name)
 
         return action_method_name
+

@@ -9,6 +9,7 @@ from gummanager.libs import GenwebServer
 
 
 class GenwebTarget(Target):
+    name = 'genweb'
     server_klass = GenwebServer
     _actions = ['add', 'list', 'del', 'get', 'status', 'reload']
     subtargets = ['instance', 'instances', 'available', 'nginx']

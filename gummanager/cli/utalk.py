@@ -8,6 +8,7 @@ from gummanager.cli.utils import json_pretty_print, run_recipe_with_confirmation
 
 
 class UTalkTarget(Target):
+    name = 'utalk'
     server_klass = UTalkServer
     _actions = ['test', 'add']
     subtargets = ['instance']
