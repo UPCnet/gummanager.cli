@@ -3,48 +3,57 @@
 
 Usage:
     gum (-vh)
-    gum ldap info [-c]
-    gum ldap add branch <branch-name>[-c]
-    gum ldap get branch <branch-name> [-c]
-    gum ldap list branches [-c]
-    gum ldap <branch-name> add users <users-file> [-c]
-    gum ldap <branch-name> list users [--filter=<text>][-c]
-    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>][-c]
-    gum ldap <branch-name> delete user <ldap-username> [-c]
-    gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>][-c]
+    gum ldap info
+    gum ldap add branch <branch-name>
+    gum ldap get branch <branch-name>
+    gum ldap list branches
+    gum ldap <branch-name> add users <users-file>
+    gum ldap <branch-name> list users [--filter=<text>]
+    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>]
+    gum ldap <branch-name> delete user <ldap-username>
+    gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>]
     gum ldap help <command>...
-    gum oauth info [-c]
-    gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>] [-c]
-    gum oauth list instances [-c]
-    gum oauth status [<instance-name>] [-c]
-    gum oauth test <instance-name> [--username=<oauth-username> --password=<oauth-password>][-c]
-    gum oauth get available port [-c]
-    gum oauth (start|stop) <instance-name> [-c]
-    gum oauth reload nginx [-c]
+
+    gum oauth info
+    gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>]
+    gum oauth list instances
+    gum oauth status [<instance-name>]
+    gum oauth test <instance-name> [--username=<oauth-username> --password=<oauth-password>]
+    gum oauth get available port
+    gum oauth (start|stop) <instance-name>
+    gum oauth reload nginx
     gum oauth help <command>...
-    gum max info [-c]
+
+    gum max info
     gum max help <command>...
-    gum max add instance <instance-name> [--port-index=<port-index> --oauth-instance=<oauth-name>] [-c]
-    gum max list instances [-c]
-    gum max get available port [-c]
-    gum max status [<instance-name>] [-c]
-    gum max (start|stop) <instance-name> [-c]
-    gum max upgrade <instance-name> [-c]
-    gum max reload nginx [-c]
-    gum genweb info [-c]
-    gum genweb list instances [-c]
-    gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-c -f]
-    gum genweb get available mountpoint [-c]
-    gum ulearn info [-c]
-    gum ulearn list instances [-c]
-    gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-c -f]
-    gum ulearn get available mountpoint [-c]
-    gum ulearn reload nginx [-c]
-    gum ulearn <instance-name> add users <users-file> [--env=<server> --mpoint=<mpoint-name>] [-c]
-    gum ulearn <instance-name> subscribe users <subscriptions-file> [--env=<server> --mpoint=<mpoint-name>] [-c]
-    gum utalk info [-c]
+    gum max add instance <instance-name> [--port-index=<port-index> --oauth-instance=<oauth-name>]
+    gum max list instances
+    gum max get available port
+    gum max status [<instance-name>]
+    gum max (start|stop) <instance-name>
+    gum max upgrade <instance-name>
+    gum max reload nginx
+    gum max help <command>...
+
+    gum genweb info
+    gum genweb list instances
+    gum genweb add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --ldap-branch=<ldap-name>] [-f]
+    gum genweb get available mountpoint
+    gum genweb help <command>...
+
+    gum ulearn info
+    gum ulearn list instances
+    gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-f]
+    gum ulearn get available mountpoint
+    gum ulearn reload nginx
+    gum ulearn <instance-name> add users <users-file> [--env=<server> --mpoint=<mpoint-name>]
+    gum ulearn <instance-name> subscribe users <subscriptions-file> [--env=<server> --mpoint=<mpoint-name>]
+    gum ulearn help <command>...
+
+    gum utalk info
     gum utalk add instance <domain> [--hashtag=<hashtag> --language=<lang>]
-    gum utalk test <domain> [-c]
+    gum utalk test <domain>
+    gum utalk help <command>...
 
 
 Options:
@@ -65,7 +74,7 @@ from gummanager.cli.utils import getConfiguration, getOptionFrom
 import patches
 import pkg_resources
 import sys
-
+import re
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -87,7 +96,10 @@ SUBTARGETS = {
 
 
 def main():
-    arguments = docopt.docopt(__doc__, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
+
+    doc_with_config_options = re.sub(r'gum (\w+) (?!help)(.*)', r'gum \1 \2 [-c]', __doc__)
+    doc_with_config_options = doc_with_config_options.replace('\n\n    gum', '\n    gum')
+    arguments = docopt.docopt(doc_with_config_options, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
 
     help_mode = False
     if arguments['help']:
@@ -113,7 +125,9 @@ def main():
         sys.exit('Not Implemented: {}'.format(action_method_name))
 
     if help_mode:
-        target.help(action_method_name)
+        command_line = ' '.join([a for a in ['gum'] + sys.argv[1:] if a != 'help'])
+        command_definition = re.search(r'\n\s*({}.*?)\n'.format(command_line), __doc__).groups()[0]
+        target.help(action_method_name, definition=command_definition)
     else:
         target_method(**arguments)
 

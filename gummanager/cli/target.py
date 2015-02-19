@@ -29,11 +29,12 @@ class Target(object):
     def actions(self):
         return list(set(self._actions + ['help', 'info']))
 
-    def help(self, method_name):
+    def help(self, method_name, definition):
 
         method = getattr(self, method_name)
         docstring = getattr(method, '__doc__')
-        print docstring.replace('\n        ', '\n    ') if docstring is not None else '\n    No help available for this command\n'
+        print term.bold + term.yellow + '\n    ' + definition + term.normal
+        print docstring.replace('\n        ', '\n') if docstring is not None else '\n    No help available for this command\n'
 
     def info(self, **kwargs):
         print
