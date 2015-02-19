@@ -1,7 +1,5 @@
 from gummanager.cli.target import Target
 from gummanager.cli.utils import GUMTable
-from gummanager.cli.utils import ask_confirmation
-from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom, padded_success
 from gummanager.cli.utils import highlighter, run_recipe_with_confirmation, LogEcho, run_recipe_without_confirmation
 from gummanager.libs import OauthServer
@@ -22,7 +20,6 @@ class OauthTarget(Target):
             based on the existing instances, and assume branch <ldap-name> named as the <instance-name>.
             If you want to use a specific port index or ldap name, please specify it.
         """
-        self.extra_config = {'ldap_config': getConfiguration(kwargs['--config'])['ldap']}
         oauth = self.Server
 
         instance_name = getOptionFrom(kwargs, 'instance-name')
