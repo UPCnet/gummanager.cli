@@ -16,22 +16,23 @@ Usage:
     gum oauth info
     gum oauth add instance <instance-name> [--port-index=<port-index> --ldap-branch=<ldap-name>]
     gum oauth list instances
-    gum oauth status [<instance-name>]
-    gum oauth test <instance-name> [--username=<oauth-username> --password=<oauth-password>]
-    gum oauth get available port
-    gum oauth (start|stop) <instance-name>
+    gum oauth status
+    gum oauth <instance-name> status
+    gum oauth <instance-name> (start|stop)
+    gum oauth <instance-name> test [--username=<oauth-username> --password=<oauth-password>]
     gum oauth reload nginx
+    gum oauth get available port
     gum oauth help <command>...
 
     gum max info
-    gum max help <command>...
     gum max add instance <instance-name> [--port-index=<port-index> --oauth-instance=<oauth-name>]
     gum max list instances
-    gum max get available port
-    gum max status [<instance-name>]
-    gum max (start|stop) <instance-name>
-    gum max upgrade <instance-name>
+    gum max status
+    gum max <instance-name> status
+    gum max <instance-name> (start|stop)
+    gum max <instance-name> upgrade
     gum max reload nginx
+    gum max get available port
     gum max help <command>...
 
     gum genweb info
