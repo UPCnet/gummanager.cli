@@ -90,7 +90,7 @@ class ConfigWrapper(dict):
         return wrapper
 
     def __getattr__(self, key):
-        if self.get(key):
+        if key in self:
             return self[key]
 
         is_password = 'password' in key.lower()
