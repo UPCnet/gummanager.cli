@@ -54,14 +54,6 @@ class UTalkTarget(Target):
             padded_error("Max server {} is bound to an oauth {} that doesn't exist".format(instance_name, oauth_instance_name))
             return None
 
-        self.extra_config = {
-            'max': maxserver,
-            'oauth': oauthserver,
-            'rabbitmq': getConfiguration(kwargs['--config'])['rabbitmq'],
-            'maxbunny': getConfiguration(kwargs['--config'])['maxbunny']
-
-        }
-
         run_recipe_with_confirmation(
             'Adding a new utalk domain',
             {
@@ -72,8 +64,8 @@ class UTalkTarget(Target):
             },
             self.Server.add_instance,
             name=instance_name,
-            server=max_instance['server']['dns'],
-            oauth_server=oauth_instance['server']['dns'],
+            oauthserver=oauth_instance,
+            maxserver=max_instance,
             hashtag=hashtag,
             restricted_user='restricted',
             language=language)
