@@ -290,7 +290,8 @@ def highlighter(**kwargs):
             formatter = getattr(term, format)
             value = re.sub(r'({})'.format(key), r'{}\1{}'.format(formatter, default_formatter), value)
 
-        return default_formatter + value + default_formatter
+        safe_value = value if isinstance(value, unicode) else value.decode('utf-8')
+        return default_formatter + safe_value + default_formatter
     return partial(highlight, **kwargs)
 
 
