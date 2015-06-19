@@ -163,8 +163,7 @@ def getConfiguration(config_file_option=''):
         parsed_config = yaml.load(open(config_file).read())
     except IOError:
         padded_error(
-            "\nError loading {}, make sure the file exists, please."
-            "\nIf you don't have one, ask for it!".format(config_file))
+            "\nError loading {}, make sure the file exists, please.".format(config_file))
         sys.exit(1)
     except ValueError:
         padded_error('\nError loading {}, check json syntax'.format(config_file))

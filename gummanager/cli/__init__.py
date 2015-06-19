@@ -69,6 +69,7 @@ from gummanager.cli.ulearn import ULearnTarget
 from gummanager.cli.utalk import UTalkTarget
 from gummanager.cli.utils import getConfiguration
 from gummanager.cli.utils import getOptionFrom
+from shutil import copy
 
 import docopt
 import patches
@@ -95,11 +96,20 @@ SUBTARGETS = {}
 
 
 def main():
+    try:
+        getConfiguration()
+    except:
+        generate = raw_input('> Do you want to generate a sample .gum.conf on this folder to fill up? (Y,n): ')
+        if generate.strip().upper() in ['Y', '']:
+            copy(pkg_resources.resource_filename(__name__, 'sample.gum.conf'), '.gum.conf')
+
+        print 'Done.'
+        print
+        sys.exit()
 
     doc_with_config_options = re.sub(r'gum (\w+) (?!help)(.*)', r'gum \1 \2 [-c]', __doc__)
     doc_with_config_options = doc_with_config_options.replace('\n\n    gum', '\n    gum')
     arguments = docopt.docopt(doc_with_config_options, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
-
     help_mode = False
     if sys.argv[2] == 'help':
         help_mode = True
