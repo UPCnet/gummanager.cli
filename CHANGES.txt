@@ -1,11 +1,34 @@
 Changelog
 =========
 
-1.5 (unreleased)
+1.5 (2015-06-21)
 ----------------
 
-- Nothing changed yet.
-
+* Add skipable step [Carles Bruguera]
+* Refactor ldap to minimize the visibility of the branches concept [Carles Bruguera]
+* Add a remote nginx setting for max and oauth [Carles Bruguera]
+* Autogenerate .gum.conf if none found on known locations [Carles Bruguera]
+* Safely decode non-unicode values [Carles Bruguera]
+* Fix client part of ultak comman [root]
+* Accept empty param values, ask only when missing [Carles Bruguera]
+* Reviewed all max commands [Carles Bruguera]
+* Review oauth commands and complete help strings [Carles Bruguera]
+* Remove extra_config from oauth cli [Carles Bruguera]
+* Make all configurations available always [Carles Bruguera]
+* Review and organize all ldap commands [Carles Bruguera]
+* Improve command definition and help system [Carles Bruguera]
+* Supress warnings to avoid requests ssl warning [Carles Bruguera]
+* Oauth test [Carles Bruguera]
+* fix mountpoint checking [Carles Bruguera]
+* Include ldap config in genweb and ulearn [Carles Bruguera]
+* don't crash if thread kill not available [Carles Bruguera]
+* Better params for ulearn creator [Carles Bruguera]
+* Cosmetic fixes, transform utalk add into recipe [Carles Bruguera]
+* Change to yaml for storing configuration [Carles Bruguera]
+* Fix colors and refomat command order [Carles Bruguera]
+* Adapt to new status [Carles Bruguera]
+* Config filename resolution order [Carles Bruguera]
+* Fix utalk test command [Carles Bruguera]
 
 1.4 (2014-10-24)
 ----------------
