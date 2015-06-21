@@ -163,7 +163,8 @@ class OauthTarget(Target):
 
         run_recipe_without_confirmation(
             oauth.test,
-            instance_name, username, password
+            instance_name, username, password,
+            stop_on_errors=False
         )
 
     def reload_nginx(self, **kwargs):

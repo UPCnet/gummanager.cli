@@ -10,7 +10,7 @@ Usage:
     gum ldap <branch-name> add users <users-file>
     gum ldap <branch-name> list users [--filter=<text>]
     gum ldap <branch-name> delete user <ldap-username>
-    gum ldap <branch-name> check user <ldap-username> [--password=<ldap-password>]
+    gum ldap [<branch-name>] check user <ldap-username> [--password=<ldap-password>]
     gum ldap help <command>...
 
     gum oauth info
@@ -101,15 +101,22 @@ def main():
     except:
         generate = raw_input('> Do you want to generate a sample .gum.conf on this folder to fill up? (Y,n): ')
         if generate.strip().upper() in ['Y', '']:
-            copy(pkg_resources.resource_filename(__name__, 'sample.gum.conf'), '.gum.conf')
+            # Write a copy of sample.gum.conf with comments stripped
+            sample = open(pkg_resources.resource_filename(__name__, 'sample.gum.conf')).read()
+            open('.gum.conf', 'w').write(re.sub(r'#.*?(\n|$)', r'\1', sample))
 
         print 'Done.'
         print
         sys.exit()
 
+    # Workaround to allow empty <branchname> on ldap commands
+    sysargs = sys.argv[1:]
+    if sysargs[0] == 'ldap' and sysargs[1] in TARGETS['ldap']({}).actions:
+        sysargs.insert(1, '.')
+
     doc_with_config_options = re.sub(r'gum (\w+) (?!help)(.*)', r'gum \1 \2 [-c]', __doc__)
     doc_with_config_options = doc_with_config_options.replace('\n\n    gum', '\n    gum')
-    arguments = docopt.docopt(doc_with_config_options, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
+    arguments = docopt.docopt(doc_with_config_options, argv=sysargs, version='GUM Cli ' + pkg_resources.require("gummanager.cli")[0].version)
     help_mode = False
     if sys.argv[2] == 'help':
         help_mode = True

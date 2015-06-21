@@ -10,6 +10,7 @@ import re
 import sys
 import threading
 import os
+from inspect import currentframe
 
 from gummanager.libs.utils import RemoteConnection
 from gummanager.libs import ports as port_definitions
@@ -47,8 +48,7 @@ def run_recipe_without_confirmation(recipe_method, *args, **kwargs):
 
 
 def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
-    stop_on_errors = kwargs.get('stop_on_errors', True)
-    kwargs.pop('stop_on_errors', None)
+    stop_on_errors = kwargs.pop('stop_on_errors', True)
 
     message = '\n    ' + term.green + title + '\n' + term.normal + json_pretty_print(params)
     if ask_confirmation(message):
@@ -60,8 +60,10 @@ def run_recipe_with_confirmation(title, params, recipe_method, *args, **kwargs):
                 print_message(code, message)
                 if (code == 0 and stop_on_errors) or code == 4:
                     sys.exit(1)
-                if code == 5:
+                elif code == 5:
                     return message
+                elif code == 6:
+                    ask_confirmation(message='', literal='Skip this step?')
     print
     return True
 
@@ -92,17 +94,17 @@ class ConfigWrapper(dict):
     def __getattr__(self, key):
         if key in self:
             return self[key]
-
         is_password = 'password' in key.lower()
         value = askOption(key, is_password)
         self[key] = value
         return value
 
 
-def ask_confirmation(message):
-    print term.yellow(message)
-    value = raw_input('    Proceed?  (Y, N): ')
-    return value.strip().upper() == 'Y'
+def ask_confirmation(message, literal='Proceed?'):
+    if message.strip():
+        print term.yellow(message)
+    value = raw_input('    {}  (Y, n): '.format(literal))
+    return value.strip().upper() in ['Y', '']
 
 
 def askOption(option_name, mask=False):
@@ -223,7 +225,7 @@ def step_log(string):
 
 
 def print_message(code, message):
-    if code in [0, 4]:
+    if code in [0, 4, 6]:
         padded_error(message)
     elif code == 1:
         padded_success(message)

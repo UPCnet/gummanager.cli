@@ -21,7 +21,8 @@ class LdapTarget(Target):
         """
             Adds a new branch named <branch-name> on the root of the ldap server
         """
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
+        import ipdb;ipdb.set_trace()
 
         run_recipe_with_confirmation(
             "Adding a new branch",
@@ -59,7 +60,7 @@ class LdapTarget(Target):
         """
             Adds a new user on the users folder of the branch specified by <branch-name>
         """
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
         username = getOptionFrom(kwargs, 'ldap-username')
         password = getOptionFrom(kwargs, 'password', mask=True)
 
@@ -80,7 +81,7 @@ class LdapTarget(Target):
 
             CSV with columns: username, display name, password
         """
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
         usersfile = getOptionFrom(kwargs, '<users-file>')
 
         ld = self.Server
@@ -107,7 +108,7 @@ class LdapTarget(Target):
             You can filter the results (case insensitive) with the --filter=<text> option
         """
 
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
         u_filter = getOptionFrom(kwargs, 'filter', default=None)
 
         users = run_recipe_without_confirmation(
@@ -132,7 +133,7 @@ class LdapTarget(Target):
         """
             Deletes a single user from the users folder of the branch specified by <branch-name>
         """
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
         username = getOptionFrom(kwargs, 'ldap-username')
 
         run_recipe_with_confirmation(
@@ -150,7 +151,7 @@ class LdapTarget(Target):
             Checks existence and password of a user on the users folder of the branch specified by <branch-name>
         """
 
-        branch_name = getOptionFrom(kwargs, 'branch-name')
+        branch_name = getOptionFrom(kwargs, 'branch-name', None)
         username = getOptionFrom(kwargs, 'ldap-username')
         password = getOptionFrom(kwargs, 'password', mask=True)
 
