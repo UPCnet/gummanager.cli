@@ -1,11 +1,10 @@
 Changelog
 =========
 
-1.6 (unreleased)
+1.6 (2015-06-22)
 ----------------
 
-- Nothing changed yet.
-
+* Fix MANIFEST to include json files [Carles Bruguera]
 
 1.5 (2015-06-21)
 ----------------
