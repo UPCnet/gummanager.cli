@@ -32,6 +32,8 @@ class UTalkTarget(Target):
         instance_name = getOptionFrom(kwargs, 'domain')
         hashtag = getOptionFrom(kwargs, 'hashtag', '')
         language = getOptionFrom(kwargs, 'language', 'ca')
+        username = getOptionFrom(kwargs, 'username', 'restricted')
+        password = getOptionFrom(kwargs, 'password')
 
         padded_log('Checking max server ...')
         max_config = getConfiguration(kwargs['--config'])['max']
@@ -67,7 +69,8 @@ class UTalkTarget(Target):
             oauthserver=oauth_instance,
             maxserver=max_instance,
             hashtag=hashtag,
-            restricted_user='restricted',
+            restricted_user=username,
+            restricted_user_password=password,
             language=language)
 
     def test(self, **kwargs):

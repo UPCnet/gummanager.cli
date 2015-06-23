@@ -22,6 +22,7 @@ class LdapTarget(Target):
             Adds a new branch named <branch-name> on the root of the ldap server
         """
         branch_name = getOptionFrom(kwargs, 'branch-name', None)
+        branch_admin_password = getOptionFrom(kwargs, 'password', mask=True)
 
         run_recipe_with_confirmation(
             "Adding a new branch",
@@ -30,7 +31,8 @@ class LdapTarget(Target):
                 "branch_name": branch_name
             },
             self.Server.add_branch,
-            branch_name)
+            branch_name,
+            branch_admin_password)
 
     def list_branches(self, **kwargs):
         """

@@ -4,7 +4,7 @@
 Usage:
     gum (-vh)
     gum ldap info
-    gum ldap add branch <branch-name>
+    gum ldap add branch <branch-name> [--password=<admin-password>]
     gum ldap list branches
     gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>]
     gum ldap <branch-name> add users <users-file>
@@ -51,7 +51,7 @@ Usage:
     gum ulearn help <command>...
 
     gum utalk info
-    gum utalk add instance <domain> [--hashtag=<hashtag> --language=<lang>]
+    gum utalk add instance <domain> [--hashtag=<hashtag> --language=<lang> --username=<username> --password=<password>]
     gum utalk test <domain>
     gum utalk help <command>...
 
