@@ -22,7 +22,6 @@ class LdapTarget(Target):
             Adds a new branch named <branch-name> on the root of the ldap server
         """
         branch_name = getOptionFrom(kwargs, 'branch-name', None)
-        import ipdb;ipdb.set_trace()
 
         run_recipe_with_confirmation(
             "Adding a new branch",
