@@ -1,11 +1,14 @@
 Changelog
 =========
 
-1.7 (unreleased)
+1.7 (2015-07-06)
 ----------------
 
-- Nothing changed yet.
-
+* Fix sysargs parsing [root]
+* Fix workaround for optional branch-name [root]
+* Fix parsing bug [root]
+* Ask for password on command line [Carles Bruguera]
+* Missing ipdb [Carles Bruguera]
 
 1.6 (2015-06-22)
 ----------------
