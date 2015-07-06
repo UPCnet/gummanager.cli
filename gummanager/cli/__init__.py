@@ -111,7 +111,7 @@ def main():
 
     # Workaround to allow empty <branchname> on ldap commands
     sysargs = sys.argv[1:]
-    if sysargs[0] == 'ldap' and sysargs[1] in TARGETS['ldap']({}).actions:
+    if len(sysargs) > 1 and sysargs[0] == 'ldap' and sysargs[1] in TARGETS['ldap']({}).actions:
         sysargs.insert(1, '.')
 
     doc_with_config_options = re.sub(r'gum (\w+) (?!help)(.*)', r'gum \1 \2 [-c]', __doc__)
