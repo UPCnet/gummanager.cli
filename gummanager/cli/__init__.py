@@ -6,10 +6,10 @@ Usage:
     gum ldap info
     gum ldap add branch <branch-name> [--password=<admin-password>]
     gum ldap list branches
-    gum ldap <branch-name> add user <ldap-username> [--password=<ldap-password>]
-    gum ldap <branch-name> add users <users-file>
-    gum ldap <branch-name> list users [--filter=<text>]
-    gum ldap <branch-name> delete user <ldap-username>
+    gum ldap [<branch-name>] add user <ldap-username> [--password=<ldap-password>]
+    gum ldap [<branch-name>] add users <users-file>
+    gum ldap [<branch-name>] list users [--filter=<text>]
+    gum ldap [<branch-name>] delete user <ldap-username>
     gum ldap [<branch-name>] check user <ldap-username> [--password=<ldap-password>]
     gum ldap help <command>...
 
@@ -111,7 +111,7 @@ def main():
 
     # Workaround to allow empty <branchname> on ldap commands
     sysargs = sys.argv[1:]
-    if len(sysargs) > 1 and sysargs[0] == 'ldap' and sysargs[1] in TARGETS['ldap']({}).actions:
+    if sysargs[0:2] in [['add', 'user'], ['add', 'users'], ['list', 'users'], ['delete', 'user'], ['check', 'user']]:
         sysargs.insert(1, '.')
 
     doc_with_config_options = re.sub(r'gum (\w+) (?!help)(.*)', r'gum \1 \2 [-c]', __doc__)
