@@ -173,7 +173,7 @@ class ULearnTarget(GenwebTarget):
                 return
 
         ldap_config = getConfiguration(kwargs['--config'])['ldap']
-        ldap_password = ldap_config['branch_admin_password']
+        ldap_password = getOptionFrom(kwargs, 'ldappassword')
 
         if create:
             siteid = instance_name

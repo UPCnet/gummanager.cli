@@ -19,6 +19,7 @@ Usage:
     gum oauth status
     gum oauth <instance-name> status
     gum oauth <instance-name> (start|stop)
+    gum oauth <instance-name> upgrade
     gum oauth <instance-name> test [--username=<oauth-username> --password=<oauth-password>]
     gum oauth reload nginx
     gum oauth get available port
@@ -43,7 +44,7 @@ Usage:
 
     gum ulearn info
     gum ulearn list instances
-    gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name>] [-f]
+    gum ulearn add instance <instance-name> [(--env=<server> --mpoint=<mpoint-name>) --max=<max-name> --ldappassword=<ldap-password>] [-f]
     gum ulearn get available mountpoint
     gum ulearn reload nginx
     gum ulearn <instance-name> add users <users-file> [--env=<server> --mpoint=<mpoint-name>]

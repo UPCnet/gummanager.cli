@@ -8,7 +8,7 @@ from gummanager.libs import OauthServer
 class OauthTarget(Target):
     name = 'oauth'
     server_klass = OauthServer
-    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'test']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'test', 'upgrade']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -185,6 +185,34 @@ class OauthTarget(Target):
         )
 
         maxserver.reload_nginx_configuration()
+
+    def upgrade(self, **kwargs):
+        """
+            Upgrades a oauth server.
+
+            The versions used in the upgrade will be the ones defined in the versions.cfg
+            of the buildout used in the instance.
+        """
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        oauthserver = self.Server
+
+        logecho = LogEcho(
+            self.config['ssh_user'],
+            self.config['server'],
+            '{}/{}/var/log/buildout.log'.format(self.config['instances_root'], instance_name),
+            filters=['Installing', 'Got', 'Updating', 'Error'],
+        )
+
+        run_recipe_with_confirmation(
+            'Upgrading an existing oauth server',
+            {
+                'name': instance_name,
+                'server': self.config['server'],
+            },
+            oauthserver.upgrade,
+            instance_name,
+            logecho=logecho,
+        )
 
     def get_available_port(self, **kwargs):
         """
