@@ -8,7 +8,7 @@ from gummanager.libs import OauthServer
 class OauthTarget(Target):
     name = 'oauth'
     server_klass = OauthServer
-    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'test', 'upgrade']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'reconfigure', 'test', 'upgrade']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -174,17 +174,36 @@ class OauthTarget(Target):
             Configuration test will be performed prior to restarting. If any
             errors found, nginx won't be restarted.
         """
-        maxserver = self.Server
+        oauthserver = self.Server
 
         run_recipe_with_confirmation(
             'Reload nginx httpd server ?',
             {
                 'server': self.config['server'],
             },
-            maxserver.reload_nginx_configuration,
+            oauthserver.reload_nginx_configuration,
         )
 
-        maxserver.reload_nginx_configuration()
+    def reconfigure_nginx(self, **kwargs):
+        """
+            Generates a new nginx configuration file for a domain.
+
+            A copy of the current configuration will be saved locally. Also a nginx
+            testconfig will be performed to chekc the new configuration.
+        """
+        oauthserver = self.Server
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+
+        run_recipe_with_confirmation(
+            'Reconfigure nginx httpd server ?',
+            {
+                'server': self.config.nginx['server'],
+                'name': instance_name
+
+            },
+            oauthserver.reconfigure_nginx,
+            instance_name
+        )
 
     def upgrade(self, **kwargs):
         """

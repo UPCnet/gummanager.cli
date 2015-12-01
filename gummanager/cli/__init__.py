@@ -22,6 +22,7 @@ Usage:
     gum oauth <instance-name> upgrade
     gum oauth <instance-name> test [--username=<oauth-username> --password=<oauth-password>]
     gum oauth reload nginx
+    gum oauth <instance-name> reconfigure nginx
     gum oauth get available port
     gum oauth help <command>...
 
