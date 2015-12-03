@@ -20,6 +20,8 @@ Usage:
     gum oauth <instance-name> status
     gum oauth <instance-name> (start|stop)
     gum oauth <instance-name> upgrade
+    gum oauth <instance-name> allow <ip>
+    gum oauth <instance-name> disallow <ip>
     gum oauth <instance-name> test [--username=<oauth-username> --password=<oauth-password>]
     gum oauth reload nginx
     gum oauth <instance-name> reconfigure nginx

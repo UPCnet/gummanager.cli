@@ -8,7 +8,7 @@ from gummanager.libs import OauthServer
 class OauthTarget(Target):
     name = 'oauth'
     server_klass = OauthServer
-    _actions = ['add', 'list', 'del', 'get', 'status', 'start', 'stop', 'reload', 'reconfigure', 'test', 'upgrade']
+    _actions = ['add', 'list', 'del', 'get', 'status', 'allow', 'disallow', 'start', 'stop', 'reload', 'reconfigure', 'test', 'upgrade']
     subtargets = ['instance', 'instances', 'available', 'nginx']
     extratargets = ['port']
 
@@ -203,6 +203,50 @@ class OauthTarget(Target):
             },
             oauthserver.reconfigure_nginx,
             instance_name
+        )
+
+    def allow(self, **kwargs):
+        """
+            Adds a new ip to the allowed to execute token-bypass endpoint.
+
+            After adding the ip, nginx configuration will be tested and reloaded.
+        """
+        oauthserver = self.Server
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        allowed_ip = getOptionFrom(kwargs, 'ip')
+
+        run_recipe_with_confirmation(
+            'Add ip to allowed list ?',
+            {
+                'server': self.config.nginx['server'],
+                'name': instance_name
+
+            },
+            oauthserver.add_allowed_ip,
+            instance_name, allowed_ip
+        )
+
+    def disallow(self, **kwargs):
+        """
+            Removes a ip from the allowed ones to execute token-bypass endpoint.
+
+            The ip must be a ip that is currently added, as this don't generate nginx
+            deny statements, only removes the current allow statements.
+            After adding the ip, nginx configuration will be tested and reloaded.
+        """
+        oauthserver = self.Server
+        instance_name = getOptionFrom(kwargs, 'instance-name')
+        allowed_ip = getOptionFrom(kwargs, 'ip')
+
+        run_recipe_with_confirmation(
+            'Add ip to allowed list ?',
+            {
+                'server': self.config.nginx['server'],
+                'name': instance_name
+
+            },
+            oauthserver.remove_allowed_ip,
+            instance_name, allowed_ip
         )
 
     def upgrade(self, **kwargs):
